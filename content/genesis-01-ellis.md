@@ -1,256 +1,241 @@
 # Chapter 1 — A World Made Good
 ### Genesis 1:1–2:3 · Ellis (Grade 1) · *The Promised Road*
+#### Draft v2 (revised against your review)
 
-> **This is a draft for your review.** Scripture is quoted in the **World English Bible (WEB,
-> public domain)**. Everything below — the telling, the activity, the writing, and the rules for
-> what "counts" as understanding — is meant to be read, corrected, and approved before I build the
-> experience around it. Places where I made a judgment call are marked **[decision]** so you can
-> redirect them.
+> **Still a draft for approval — educational decisions first, database second.**
+> **Open proposals, not yet finalized** (your note): the **translation** shown here is WEB; the
+> reading guide named here is **Ezra**; the Chapter‑1 **memory verse** is a proposal; the
+> **four‑card** activity is one option being tested. None of these is locked — flag any and I'll
+> change it before anything is built.
 
 ---
 
 ## 1. The big idea — what this chapter reveals about God
 
-Everything in the chapter points to one truth a six-year-old can carry for life:
+> **God made everything, and He declared it good.**
 
-> **God made everything, and what He made was very good.**
+Creation is good **because God says so** — not because it is useful to us. That distinction now runs
+through the whole chapter (it drove several of your corrections). What Ellis should come to see about
+*God*:
 
-Three things about *God* grow out of that, and they are what the whole chapter is steering toward
-(understanding leads; the activity and writing serve it):
+- **God is the Maker.** "In the beginning, God created the heavens and the earth" (1:1).
+- **God is powerful and good.** He speaks, and it is; and He calls it *good*, then *very good* (1:3,
+  1:31).
+- **God is generous.** He made a good world and gave people a place and a job in it (1:28).
 
-- **God is the Maker.** The world did not make itself. "In the beginning, God created…" (1:1).
-- **God is powerful and good.** He speaks, and it happens — and He calls it *good*, and at the end
-  *very good* (1:3, 1:31).
-- **God is generous.** He made a good world and gave people the job of caring for it (1:28).
-
-**[decision]** For Ellis I keep it to *God the Maker of a good world who gives us a job*. The
-Fracture and the Promise (the next stops) are deliberately **not** introduced here — this chapter
-is the "good world" foundation they're later contrasted against.
+The Fracture and the Promise (later stops) are deliberately not introduced here — this chapter is the
+"good world" foundation.
 
 ---
 
-## 2. What Ellis should come away understanding (the connected learning record)
+## 2. The learning model (what we store is downstream of this)
 
-These four understandings are the heart of the "one connected record." **Each one is checked
-somewhere in the chapter, and the same record is what the parent dashboard and the passport read.**
-No understanding is marked from more than one place, so evidence can never disagree with itself.
+### One authoritative record, many pieces of evidence
+Each explorer has **one** learning record. An understanding is **not** a single flag set once — it
+holds a **log of evidence** gathered over time. Later practice (this chapter or a future one) can add
+evidence that **strengthens** an understanding or **reveals uncertainty** in it. (Per your note: one
+record reduces the integration problem; it does not freeze learning in place.)
 
-| Key | Understanding (child-facing) | Where it's checked | What counts as *Demonstrated* |
-|----|------------------------------|--------------------|-------------------------------|
-| `creator` | **God made everything.** | Part 2, Question 1 | Chooses **God** as the one who made the world. |
-| `good` | **God said it was very good.** | Part 2, Question 2 | Identifies that God called His creation **"very good."** |
-| `order` | **God made the world in a good order.** | Part 2, the sequencing activity | Places all cards in the correct order. |
-| `application` | **God gave us the job to care for His world.** | Part 3, the writing plan | Names or chooses one real way to **care for** something God made. |
+### The four understandings for this chapter
+| Key | Understanding (child-facing) | Primary evidence this chapter |
+|----|------------------------------|-------------------------------|
+| `creator` | **God made everything.** | Part 2, Question 1 |
+| `good` | **God called His creation good.** | Part 2, Question 2 |
+| `order` | **God made things in an order.** | Part 2, the ordering activity |
+| `application` | **God gives people the job of caring for His world.** | Part 3, the care scenario |
 
-**Status for each understanding (honest, three states):**
+"Primary evidence" is just where it's *first* checked — other activities, now or later, can add
+evidence to the same understanding.
 
-- **Not yet checked** — Ellis hasn't reached that check.
-- **Practice needed** — Ellis tried and wasn't right yet (so the parent sees *where* to help).
-- **Demonstrated** — Ellis got it right.
+### Four honest states (your correction: independence matters)
+Derived from the evidence log:
+- **Not yet checked** — no evidence yet.
+- **Practice needed** — tried, not right yet. *(Parents see exactly what to revisit.)*
+- **Completed with support** — got it right, but after a hint or correction.
+- **Demonstrated independently** — got it right without help.
 
-**Rank / recognition.** Rank is simply **how many of the four are Demonstrated** (0–4). That is the
-*only* thing that moves it. **[decision]** I'm dropping the old prototype's "20 points" number — for
-a six-year-old, *"3 of 4 discoveries made"* is clearer and more honest than a point total, and it
-maps straight to the four passport badges below.
+Both "completed with support" and "demonstrated independently" earn encouragement and move the child
+forward; **parents can see which one it was.**
 
-**What is *not* scored.** Writing **quality** is never auto-graded — the dashboard shows Ellis's
-actual saved sentence and that writing *happened*, nothing more. A **revision** is recognized as
-"came back and revised," not as "improved." (This keeps the honest stance from your review.)
+### Chapter progress vs. rank (kept separate, per your correction)
+- **Chapter progress** = **"X of 4 discoveries"** — a progress indicator *for this chapter only.*
+- **Rank** = a **separate, performance‑based, curriculum‑wide** system with **retakes to improve.**
+  It is preserved; its details aren't part of this chapter's wording, and I won't collapse it into
+  the four discoveries.
+
+### Writing (your correction: assessment preserved, not removed)
+- In this prototype, children's writing is **ungraded**, and children **never** see academic grades.
+- The record stores the **saved writing** and the fact that **writing / revision happened.**
+- A **parent‑facing assessment against grade‑level writing standards — with AI feedback and revision
+  support — is planned**, not deleted. The data model leaves room for it from the start.
 
 ---
 
-## 3. Part 1 — The Telling  *(READ — guided by Ezra)*
+## 3. Part 1 — The Telling  *(READ)*
 
-A real, complete telling of the whole chapter — not a sampler. Grade-1 voice: short sentences,
-concrete pictures, warm. Each day shows **what Ellis sees**, then the **anchor verse (WEB)** so the
-Scripture itself is always present.
-
-**Ezra opens:**
-> "Before anything you have ever seen — before the sun, before the sea, before a single bird — there
-> was God. Let's watch how it all began."
+The complete telling of the chapter (grade‑1 voice), with the Scripture itself always present.
+*(Translation = proposal.)*
 
 > **"In the beginning, God created the heavens and the earth."** — Genesis 1:1
 
-**Day 1 — Light.** It was dark. Then God *spoke*. "Let there be light!" — and light poured in. God
-called the light **Day** and the dark **Night.**
-> "God said, 'Let there be light,' and there was light." — Genesis 1:3
+**Day 1 — Light.** It was dark. Then God *spoke:* "Let there be light!" — and there was light. God
+called the light **Day** and the dark **Night.** *(1:3)*
 
-**Day 2 — Sky.** God made the wide open **sky** above, and stretched it over the waters.
+**Day 2 — Sky.** God made the wide **sky** and stretched it over the waters.
 
-**Day 3 — Land, Sea, and Plants.** God gathered the waters so dry **land** could rise. He called the
-dry land **Earth** and the waters **Seas.** Then — green! Grass, plants, and trees full of fruit.
-> "God saw that it was good." — Genesis 1:12
+**Day 3 — Land, Sea, and Plants.** God gathered the waters so dry **land** could rise — **Earth** and
+**Seas** — and filled it with grass, plants, and fruit trees. *"God saw that it was good." (1:12)*
 
-**Day 4 — Sun, Moon, and Stars.** God placed the bright **sun** to rule the day, the **moon** and
-**stars** for the night — lights to mark days and seasons and years.
+**Day 4 — Sun, Moon, and Stars.** God set the **sun** for the day, the **moon** and **stars** for the
+night, to mark days and seasons and years.
 
-**Day 5 — Fish and Birds.** The seas filled with swimming things, great and small, and **birds** rose
-up to fly across the sky.
+**Day 5 — Fish and Birds.** The seas filled with swimming things, and **birds** flew across the sky.
 
-**Day 6 — Animals and People.** God made the **animals** — creeping, walking, leaping. And then God
-made something unlike anything else: **people**, in His own image.
-> "God created man in his own image. In God's image he created him; male and female he created
-> them." — Genesis 1:27
+**Day 6 — Animals and People.** God made the **animals**, and then made **people**, in His own image.
+> "God created man in his own image… male and female he created them." — Genesis 1:27
 
-God **blessed** them and gave them a job: to fill the earth and **care for** it.
-> "Be fruitful, multiply, fill the earth, and subdue it. Have dominion…" — Genesis 1:28
+God **blessed** them and gave them a place and a job — to fill the earth and **care for** it. *(1:28)*
 
-And God looked at **all** of it:
+Then God looked at **all** of it:
 > "God saw everything that he had made, and, behold, it was very good." — Genesis 1:31
 
-**Day 7 — Rest.** Everything was finished. On the seventh day God **rested**, and He made that day
-holy.
-> "God… rested on the seventh day… God blessed the seventh day, and made it holy." — Genesis 2:2–3
+**Day 7 — Rest.** Everything was finished. God **rested** on the seventh day and made it holy.
+*(2:2–3)*
 
-**Ezra closes:**
-> "A whole world — light and sea and sky, creatures and people — all made by God, all called *very
-> good.* Now let's make sure we remember it."
-
-**Key words** (tap to learn, grade-1 definitions):
-- **Created** — made something brand new, out of nothing. Only God can do that.
-- **Very good** — exactly right. Just the way God wanted it.
-- **Care for** — to watch over something and help it, like God asked people to do with the world.
+**Key words** (grade‑1):
+- **Created** — God brought it into being; He made it so. *(We teach God's power to create — including
+  that He created without needing anything first — through the story, rather than packing the whole
+  doctrine into one dictionary line. Revised per your note.)*
+- **Very good** — just the way God wanted it; exactly right.
+- **Care for** — to watch over something and help it, as God asked people to do.
 
 ---
 
-## 4. Part 2 — Explore & Understand  *(guided by the Question guide)*
+## 4. Part 2 — Explore & Understand
 
-This is where three of the four understandings are checked. Questions **lead with God**, then the
-activity shows the *order* of His making.
+Understanding leads; it is checked here, and **Scripture memory is restored as a core part** (your
+correction).
 
-**Question 1 — checks `creator`**
-> "We read about a lot of things being made. **Who made the world and everything in it?**"
-- **God** ✓ → *"Yes! 'In the beginning, **God** created.' Everything we see began with Him."*
-- The sun — *"The sun is bright, but the sun was **made** — on Day 4. Who made it?"*
-- The sea — *"The sea is deep and wide, but it was **made** too. Who made the sea?"*
-- People — *"People were made last of all, on Day 6. Someone made them. Who?"*
+**Question 1 — `creator`**
+> "Who made the world and everything in it?"
+- **God** ✓ → *"Yes — 'In the beginning, **God** created.'"*
+- The sun → *"The sun is bright, but the sun was **made**, on Day 4. Who made it?"*
+- The sea → *"The sea is wide, but it was **made** too. Who made the sea?"*
 
-> **[decision] Feedback names the specific thing to reconsider** (your note #feedback) — each wrong
-> choice points Ellis back to *why* that thing can't be the Maker, instead of a generic "try again."
+**Question 2 — `good`**
+> "When God looked at everything He had made, what did He say about it?"
+- It was **very good** ✓ → *"That's it — God **called** it very good. It is good because **God says
+  so.**"*
+- It was big → *"It is big — but that's not what God **said** about it. Look again at 1:31."*
 
-**Question 2 — checks `good`**
-> "When God finished and looked at **everything** He had made, what did He say about it?"
-- It was **very good** ✓ → *"That's it — 'God saw everything… and it was **very good.**' God was
-  pleased with His whole world."*
-- It was finished — *"It **was** finished — but look at what God *said* when He saw it. How did He
-  feel about it?"*
-- It was big — *"It is big! But that's not what God **said** about it. Look again at Genesis 1:31."*
+*(Feedback names the specific thing to reconsider — your #feedback note.)*
 
-**The Activity — Order the Days of Creation — checks `order`**
+**Scripture memory — restored** *(verse = proposal)*
+A short, **supported** practice — not a cold recitation:
+> **Proposed verse:** *"In the beginning, God created the heavens and the earth." — Genesis 1:1*
+> **[decision]** Grade‑1 → I propose **Genesis 1:1** (short, foundational). Your Scripture Memory
+> Program lists **Genesis 1:27** for the opening lessons — tell me which you want as Chapter 1's verse.
 
-Ellis puts picture cards in the order God made them. Drag **or** tap-to-place (both already work).
+Supported practice options (pick the gentlest that still teaches):
+- **Build the verse:** tap the words into order (with the verse visible first, then faded).
+- **Fill the blank:** "In the beginning, God ______ the heavens and the earth."
 
-> **[decision] Four cards for Ellis** (grade 1). This keeps it on one screen and centers the most
-> teachable point — *light came before the sun.* Rowan/Avery get more cards later.
+Memory practice records evidence too, with the same independent‑vs‑supported distinction.
 
-Correct order:
-1. **Light** (Day 1)
-2. **Sky** (Day 2)
-3. **Land & Plants** (Day 3)
-4. **Sun, Moon & Stars** (Day 4)
+**Activity — "Put these creation moments in order"** *(name revised; 4 cards = an option, not a rule)*
+Covers **Days 1–4** (not the whole account). Drag **or** tap‑to‑place.
 
-**Contextual help** (your note #help — help *shows the task*, not just the gesture):
-> "Think back to the very beginning. It was dark — so what did God make **first**, before anything
-> could be seen? Start there, then follow the days forward."
+Correct order: **1 Light → 2 Sky → 3 Land & Plants → 4 Sun, Moon & Stars.**
 
-**Specific, relationship-naming feedback** (your note #feedback). The one kids reliably miss is
-putting the sun first:
-> "Look again at **Light** and the **Sun**. God made light on **Day 1** — but the sun, moon, and
-> stars didn't come until **Day 4.** Which one came first?"
-
-Other near-misses get their own specific nudge (e.g., Land vs. Sky: *"The waters were gathered so
-land could rise — did the **sky** come before or after the dry land appeared?"*).
-
-- **First try correct →** `order` = Demonstrated.
-- **Corrected after a nudge →** still Demonstrated (we reward getting there), but the record notes it
-  took a retry, so the parent sees it was close rather than instant. **[decision]**
+- **Contextual help** (shows the task, not just the gesture): *"It was dark at first — what did God
+  make **before** anything could be seen? Start there, then move forward through the days."*
+- **Specific feedback** (the common miss): *"Look again at **Light** and the **Sun.** God made light
+  on **Day 1**, but the sun on **Day 4.** Which came first?"*
+- First try correct → `order` **demonstrated independently.** Correct after the nudge → **completed
+  with support.**
 
 ---
 
-## 5. Part 3 — Respond & Write  *(guided by the Journal guide: Example → Plan → Write → Review)*
+## 5. Part 3 — Respond & Write
 
-This is the guided-writing flow you liked — kept, with the two fixes from your review (the picture
-stays visible; the plan carries through).
+Guided writing (Example → Plan → Write → Review), with your corrections to the prompt and to the
+application.
 
-**Prompt (grade 1):**
-> "God made so many good things. **Pick one thing God made that you are thankful for, and tell why
-> it is good.**"
+**Prompt (revised — removes the "good = useful to us" implication):**
+> **"Choose something God made. Tell one thing you notice about it."**
 
-**Example** (shown first, so Ellis sees what "good" looks like):
-> *"God made the **stars.** They are good because they shine in the dark and show me God is big."*
+**Example:**
+> *"God made **birds.** Birds have wings and feathers."*
 
-**Plan — pick your picture** (this is also the `application`/`care` check):
-Ellis taps a picture of something God made — **birds, trees, the sea, animals, light, stars**. The
-chosen picture is **pinned to the top of the screen and stays there** through writing **and** review
-(fixes your #5). Then one tap: *"How can you help **care for** [birds]?"* with simple choices (give
-them water / don't scare them / keep their home clean…). Choosing a real way to care = `application`
-Demonstrated. **[decision]** This is how "care for creation" becomes something Ellis *does*, not just
-hears.
+**Connect it back (the app shows, after writing):**
+> *"Birds are part of the creation God called **very good.**"*
 
-**Write.** A big, friendly box. Sentence starter available but optional:
-> *"God made ____. It is good because ____."*
+- The chosen **picture stays pinned** at the top through writing **and** review (fixes your #5).
+- **Gratitude is an invitation, never a requirement:** an optional "If you like, add why you're
+  thankful for it" — writing is complete without it.
+- **Review** is honest, not a grade: *✓ I chose something God made. ✓ I told one thing I notice.*
+  *Would you like to add more?* (invites, doesn't demand).
 
-**Review** (honest — not a grade):
-- ✓ I picked something God made. *(the pinned picture)*
-- ✓ I told **why** it is good.
-- Would you like to add one more thing? *(optional — invites revision, doesn't demand it)*
-
-The saved sentence flows to the **Journal** and the **parent dashboard** exactly as it does now —
-but now it's part of the *same* record as the understandings.
+**Application is now its own short scenario** (your correction — don't force light/stars into a "care
+for" template):
+> After writing, a separate quick step: *"God gives us the job of caring for His world. Here is a
+> **plant** (or a **pet**, or a **messy park**). Which is a good way to care for it?"* — choices that
+> fit something a child **can** responsibly care for.
+Choosing a real way to care = `application` evidence (independent, or with a hint → with support).
+The child's **writing subject stays whatever they chose** — it is not bent to be care‑able.
 
 ---
 
-## 6. Completion, badges & the passport  *(your note on honest interim progress)*
+## 6. Completion & the passport  *(revised)*
 
-**Four Discovery Badges** — one per understanding, earned the moment it's Demonstrated, visible in
-the passport right away:
-
-- 🕊️ **Maker** — God made everything. *(`creator`)*
-- 🌿 **Very Good** — God called it very good. *(`good`)*
-- 🔢 **In Order** — the days in order. *(`order`)*
-- 🤲 **A Caretaker** — a way to care for God's world. *(`application`)*
-
-**The Genesis stamp — "A World Made Good"** — is still withheld until the chapter is genuinely
-finished: **all four badges earned _and_ a saved writing _and_ the review opened.** So the passport
-now *recognizes real work along the way* (the badges) while still reserving the big stamp for true
-completion. **[decision]**
+- The four understandings appear as **learning progress**, not as four badges. *(Your correction —
+  no automatic four‑badge shower.)*
+- Finishing Chapter 1 earns a **chapter completion marker** — *not* the Genesis stamp.
+- **Illustrated passport badges are reserved** for meaningful milestones and special discoveries, so
+  they keep their value.
+- The **Genesis stamp** comes only after the **whole Genesis book and its review/finale.** *(Your
+  correction to the book structure.)*
 
 ---
 
-## 7. What the parent sees (the connected evidence)
+## 7. What the parent sees
 
-One screen, reading the one record:
-
-- **Discoveries:** the four understandings, each **Demonstrated / Practice needed / Not yet checked**
-  — so a parent knows *exactly* what to revisit (e.g., "Order: practice needed — he had the sun
-  before the light").
-- **Journey:** "Chapter 1 — in progress / complete."
-- **Writing:** Ellis's actual saved sentence, with "saved · [date]." No quality score.
-- **Supports used:** whether reading help or the activity hint was on (so evidence is read in
-  context).
-
-Because all of this is the **same** record the activities write to, the bug you found — finishing the
-sequence but the parent view still saying "Not yet checked" — **cannot happen** in this design.
+Reading the one record:
+- **Understandings:** each shown as **Not yet checked / Practice needed / Completed with support /
+  Demonstrated independently** — so a parent knows both *what* to revisit and *how much help* it took.
+- **Chapter progress:** "X of 4 discoveries · in progress / complete."
+- **Writing:** the child's actual saved text, "saved · [date]." Ungraded now; grade‑level writing
+  assessment (AI + revision) is the planned next layer, never shown to the child as a grade.
+- **Supports used:** reading help / activity hint on or off, so evidence is read in context.
+- **Rank:** surfaced from the separate curriculum‑wide performance system (with retakes) — not the
+  same as the four discoveries.
 
 ---
 
-## 8. For later (not this chapter)
+## 8. Verification we will do (your correction)
 
-- **Rowan (Grade 4):** same four understandings, but 6 day-cards, a short "why" after the sequence,
-  and a 3–4 sentence paragraph in writing.
-- **Avery (Grade 7):** understanding **leads with God** (your note) — e.g., *"What does Genesis 1
-  show about God's character, and which verse is your evidence?"* — with classification serving that
-  question, not replacing it.
-- **Books ↔ Journey:** one main destination (this book) opens front-and-center; the full 66-book
-  collection becomes a secondary "library" view. **[decision, per your note]**
-- **Portraits:** individually framed art, **8** characters (needs new image assets — flagged, not
-  blocking).
+One shared record **reduces** disagreement; it does not make it impossible — saves can fail, displays
+can go stale, updates can be wrong. Before calling the chapter done we **test the full chain
+end‑to‑end:** *activity result → evidence saved → parent display → chapter progress*, including a
+failed‑save and a reload mid‑chapter. This is an explicit build step, not an afterthought.
 
 ---
 
-### Your review
+## 9. For later (not this chapter)
+- **Rowan (G4):** 6 cards, a short "why," a short paragraph.
+- **Avery (G7):** leads with *"What does Genesis 1 reveal about God, and which verse is your
+  evidence?"*; classification serves that.
+- **Books ↔ Journey:** one main destination opens the current book; the full collection is a
+  secondary library.
+- **Portraits:** individually framed art, **8** characters (new assets needed; not blocking).
+- **Preserved systems:** performance‑based rank + retakes; parent‑facing grade‑level writing
+  assessment with AI + revision.
 
-Tell me what to change in the **telling**, the **four understandings**, the **activity cards/order**,
-the **writing prompt**, or any **[decision]**. Once you approve, I build: the Supabase learning
-record (the four understandings + journal, with RLS), then Part 1 → 2 → 3 wired to that one record,
-with "Continue where you left off" and the parent evidence reading the same rows.
+---
+
+### Please confirm or redirect
+Open items I specifically need your call on: **(a)** memory verse — Genesis **1:1** or **1:27**;
+**(b)** translation (WEB or other); **(c)** guide persona/name (Ezra or other); **(d)** the 4‑card
+Days‑1–4 activity as this chapter's ordering task. Once the telling and these support rules are
+final, I'll derive the database from them and build Part 1 → 2 → 3 → parent evidence, with the full
+chain verified.
