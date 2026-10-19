@@ -233,9 +233,36 @@ failed‑save and a reload mid‑chapter. This is an explicit build step, not an
 
 ---
 
-### Please confirm or redirect
-Open items I specifically need your call on: **(a)** memory verse — Genesis **1:1** or **1:27**;
-**(b)** translation (WEB or other); **(c)** guide persona/name (Ezra or other); **(d)** the 4‑card
-Days‑1–4 activity as this chapter's ordering task. Once the telling and these support rules are
-final, I'll derive the database from them and build Part 1 → 2 → 3 → parent evidence, with the full
-chain verified.
+## RESOLVED (v3) — building to this
+
+**Four adjustments (final):**
+1. **Access support ≠ answer support.** Narration, enlarged text, and accessible controls are
+   recorded **separately** and do **not** downgrade an answer to "completed with support." Only an
+   **answer hint/correction** moves *demonstrated independently → completed with support.* A child
+   can demonstrate independently *while using narration.*
+2. **Chapter completion is separate from the four discoveries.** "4 of 4 discoveries" measures
+   *understanding.* **Completion** additionally requires: the **story** read, **Scripture practice**,
+   a **saved written response** (a meaningful attempt), and the **application** step. **Supported
+   success counts; perfect recall or flawless writing never blocks completion.**
+3. **The writing review is a child action, not an app verdict.** Instead of ✓ marks that imply the
+   app checked, Ellis is *asked:* "Did you name something God made?" / "Did you tell something you
+   noticed?" with **Yes** or **Help me check.** The app never implies an assessment it didn't perform.
+4. **Goodness, stated plainly.** Not "good because God says so" (sounds arbitrary). For Ellis:
+   **"God looked at everything He had made. It was very good."** And **God's rest = His work was
+   complete, not that He was tired.**
+
+**Open decisions (resolved):**
+- **Memory verse:** **Genesis 1:1** this chapter. Genesis 1:27 is taught more deeply in the next
+  chapter (humanity's calling). The older memory program is a reference, **not** binding, until verified.
+- **Translation:** **WEB** working choice. **Scripture quotations are visually distinct from our
+  retelling.**
+- **Guide:** keep the role; **Ezra is provisional.** The guide **reads and points to Scripture —
+  never claims to have witnessed** events he didn't see.
+- **Activity:** approved — **"Put these four creation moments in order"** (Days 1–4), while **the
+  story tells all six days and the seventh-day rest.**
+
+**Writing expectation:** two sentences are **modeled as an invitation**, not a rigid minimum.
+
+**Next deliverable (building now):** the complete Ellis experience — story → explore (questions,
+memory, ordering) → write (response, self-check, application) → **chapter completion marker** — with
+**parent evidence reading the same single record**, verified end-to-end.
