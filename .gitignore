@@ -25,3 +25,5 @@ dist-ssr
 
 # local reference extracted from the design preview
 .preview-ref
+
+.env
