@@ -3,7 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 const STAGE_NOTE =
   'This is the Stage 0 build — the look is live, real accounts and saving arrive in the next update.';
 
-export default function EntryPanel({ focusSignal }: { focusSignal: number }) {
+export default function EntryPanel({
+  focusSignal,
+  onGuest,
+}: {
+  focusSignal: number;
+  onGuest: () => void;
+}) {
   const [tab, setTab] = useState<'parent' | 'explorer'>('parent');
   const [parentMode, setParentMode] = useState<'signin' | 'setup'>('signin');
   const [message, setMessage] = useState('');
@@ -127,6 +133,13 @@ export default function EntryPanel({ focusSignal }: { focusSignal: number }) {
           {message}
         </div>
       )}
+
+      <div className="guest-entry">
+        <button className="primary" type="button" onClick={onGuest}>
+          Explore without signing in →
+        </button>
+        <p className="guest-note">No account needed — jump in and look around.</p>
+      </div>
     </div>
   );
 }

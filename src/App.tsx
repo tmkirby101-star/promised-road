@@ -2,23 +2,28 @@ import { useState } from 'react';
 import Masthead from './components/Masthead';
 import SceneCarousel from './components/SceneCarousel';
 import EntryPanel from './components/EntryPanel';
+import JourneyView from './components/JourneyView';
 import BrandDialog, { type InfoKind } from './components/BrandDialog';
 
+type View = 'landing' | 'journey';
+
 export default function App() {
+  const [view, setView] = useState<View>('landing');
   const [info, setInfo] = useState<InfoKind>(null);
   const [focusSignal, setFocusSignal] = useState(0);
 
+  if (view === 'journey') {
+    return <JourneyView onLeave={() => setView('landing')} />;
+  }
+
   return (
     <>
-      <Masthead
-        onInfo={(k) => setInfo(k)}
-        onSignIn={() => setFocusSignal((n) => n + 1)}
-      />
+      <Masthead onInfo={(k) => setInfo(k)} onSignIn={() => setFocusSignal((n) => n + 1)} />
       <main className="shell">
         <SceneCarousel />
         <section className="entry">
           <span className="preview-label">EARLY ACCESS BUILD</span>
-          <EntryPanel focusSignal={focusSignal} />
+          <EntryPanel focusSignal={focusSignal} onGuest={() => setView('journey')} />
           <div className="entry-footer">
             The Promised Road · A Bible adventure for growing minds.
           </div>
