@@ -6,9 +6,8 @@ import './book.css';
  * Isolated storybook prototype. Reachable at #book; does not touch the working
  * chapter. Uses existing approved creation artwork — no new assets.
  *
- * Scope (approved): two consecutive Creation spreads, normal + enlarged text
- * with a single-page fallback, one guide transition outside the story pages,
- * one discovery activity, then a clear return. Judge the reading experience.
+ * The left page is PORTRAIT: artwork must be composed for that upright space,
+ * not a landscape scene. Here the square cards cover-fill it to show the area.
  */
 
 interface Spread {
@@ -16,7 +15,7 @@ interface Spread {
   day: string;
   img: string;
   alt: string;
-  narration: string;
+  narration: string[]; // two short paragraphs, broken at a story beat
   scripture: { text: string; ref: string };
 }
 
@@ -26,8 +25,10 @@ const SPREADS: Spread[] = [
     day: 'Day One',
     img: '/assets/card-light.webp',
     alt: 'Light breaking over the dark waters',
-    narration:
-      'The earth lay dark and empty, and the deep waters were still. Then God spoke into the darkness: “Let there be light!” — and there was light. God saw that the light was good, and he set the light apart from the darkness. He called the light Day, and the darkness he called Night.',
+    narration: [
+      'The earth lay dark and empty, and the deep waters were still. Then God spoke into the darkness: “Let there be light!” — and there was light.',
+      'God saw that the light was good, and he set the light apart from the darkness. He called the light Day, and the darkness he called Night.',
+    ],
     scripture: { text: 'God said, “Let there be light,” and there was light.', ref: 'Genesis 1:3' },
   },
   {
@@ -35,15 +36,17 @@ const SPREADS: Spread[] = [
     day: 'Day Two',
     img: '/assets/card-sky.webp',
     alt: 'The open sky stretched high above the waters',
-    narration:
-      'God made a wide, open space and stretched it out over the waters, setting the waters below apart from the waters above. God called that great open space Sky. It arched high over everything, and there was evening and morning — a second day.',
+    narration: [
+      'God made a wide, open space and stretched it out over the waters, setting the waters below apart from the waters above.',
+      'God called that great open space Sky. It arched high over everything, and there was evening and morning — a second day.',
+    ],
     scripture: { text: 'God called the expanse “sky”.', ref: 'Genesis 1:8' },
   },
 ];
 
 const TOTAL_FACES = SPREADS.length * 2; // [img0, text0, img1, text1]
 
-type Phase = 'book' | 'guide' | 'activity' | 'done';
+type Phase = 'book' | 'activity' | 'done';
 
 function shuffle<T>(a: T[]): T[] {
   const r = a.slice();
@@ -56,7 +59,8 @@ function shuffle<T>(a: T[]): T[] {
 
 export default function BookPrototype() {
   const [phase, setPhase] = useState<Phase>('book');
-  const [face, setFace] = useState(0); // 0..TOTAL_FACES-1
+  const [face, setFace] = useState(0);
+  const [closing, setClosing] = useState(false);
   const [bigText, setBigText] = useState(false);
   const [narrow, setNarrow] = useState(false);
 
@@ -71,21 +75,22 @@ export default function BookPrototype() {
   const single = bigText || narrow;
   const spreadIndex = Math.floor(face / 2);
   const bookmark = spreadIndex + 1;
+  const atLastReading = single ? face + 1 >= TOTAL_FACES : spreadIndex + 1 >= SPREADS.length;
+
+  // Finish reading: let the book recede, then reveal the discovery space.
+  const finishReading = () => {
+    setClosing(true);
+    window.setTimeout(() => {
+      setClosing(false);
+      setPhase('activity');
+    }, 480);
+  };
 
   const nextReading = () => {
-    if (single) {
-      if (face + 1 >= TOTAL_FACES) setPhase('guide');
-      else setFace(face + 1);
-    } else {
-      const ns = spreadIndex + 1;
-      if (ns >= SPREADS.length) setPhase('guide');
-      else setFace(ns * 2);
-    }
+    if (atLastReading) { finishReading(); return; }
+    setFace(single ? face + 1 : (spreadIndex + 1) * 2);
   };
-  const prevReading = () => {
-    if (single) setFace(Math.max(0, face - 1));
-    else setFace(Math.max(0, (spreadIndex - 1) * 2));
-  };
+  const prevReading = () => setFace(single ? Math.max(0, face - 1) : Math.max(0, (spreadIndex - 1) * 2));
 
   const rootClass = `bk-root${single ? ' single' : ''}${bigText ? ' bigtext' : ''}`;
 
@@ -102,7 +107,7 @@ export default function BookPrototype() {
       {phase === 'book' && (
         <>
           <div className="bk-stage">
-            <div className="bk-book">
+            <div className={`bk-book${closing ? ' closing' : ''}`}>
               <span className="bk-ribbon" title={`Bookmark · Day ${bookmark}`} />
               {single ? (
                 <SingleFace spread={SPREADS[spreadIndex]} isText={face % 2 === 1} faceKey={face} />
@@ -110,9 +115,7 @@ export default function BookPrototype() {
                 <>
                   <div className="bk-page left">
                     <div className="bk-face" key={`l${spreadIndex}`}>
-                      <div className="bk-illus">
-                        <img src={SPREADS[spreadIndex].img} alt={SPREADS[spreadIndex].alt} />
-                      </div>
+                      <div className="bk-illus"><img src={SPREADS[spreadIndex].img} alt={SPREADS[spreadIndex].alt} /></div>
                     </div>
                   </div>
                   <span className="bk-crease" />
@@ -124,41 +127,35 @@ export default function BookPrototype() {
             </div>
           </div>
           <div className="bk-nav">
-            <button onClick={prevReading} disabled={face === 0}>‹ Back</button>
+            <button onClick={prevReading} disabled={face === 0 || closing}>‹ Back</button>
             <span className="bk-page-count">
               {single ? `Page ${face + 1} of ${TOTAL_FACES}` : `Day ${bookmark} of ${SPREADS.length}`}
             </span>
-            <button onClick={nextReading}>
-              {(single ? face + 1 >= TOTAL_FACES : spreadIndex + 1 >= SPREADS.length) ? 'Finish reading ›' : 'Turn the page ›'}
+            <button onClick={nextReading} disabled={closing}>
+              {atLastReading ? 'Finish reading ›' : 'Turn the page ›'}
             </button>
           </div>
         </>
       )}
 
-      {phase === 'guide' && (
-        <div className="bk-stage">
-          <div className="bk-guide">
-            <div className="seal">📜</div>
-            <div className="who">Ezra · Keeper of the Scroll</div>
-            <p className="say">
-              “I keep these scrolls, and I read them with you. You have seen how the first days of the
-              world unfolded — light, and then the sky.”
-            </p>
-            <p className="handoff">Now let us remember them together.</p>
-            <button onClick={() => setPhase('activity')}>Explore the story →</button>
-          </div>
-        </div>
-      )}
-
       {phase === 'activity' && (
         <div className="bk-stage">
-          <Discovery onDone={() => setPhase('done')} />
+          <div className="bk-act bk-reveal">
+            <div className="bk-guide-row">
+              <div className="seal">📜</div>
+              <div>
+                <div className="who">Ezra</div>
+                <p className="invite">“Light, then sky. Can you put those moments in order?”</p>
+              </div>
+            </div>
+            <Discovery onDone={() => setPhase('done')} />
+          </div>
         </div>
       )}
 
       {phase === 'done' && (
         <div className="bk-stage">
-          <div className="bk-done">
+          <div className="bk-done bk-reveal">
             <div className="big">🌿</div>
             <h3>Well remembered!</h3>
             <p>Your bookmark is saved at Day {SPREADS.length}. You can read on, or come back any time.</p>
@@ -178,15 +175,19 @@ export default function BookPrototype() {
 function TextFace({ spread, faceKey }: { spread: Spread; faceKey: string }) {
   return (
     <div className="bk-face" key={faceKey}>
-      <div className="bk-daytag">{spread.day}</div>
-      <p className="bk-narr">{spread.narration}</p>
-      <button className="bk-readaloud" onClick={() => speak(spread.narration + '. ' + spread.scripture.text)}>
-        🔊 Read this page to me
-      </button>
-      <div className="bk-scrip">
-        <span className="sclab">From Scripture · WEB</span>
-        <span className="q">“{spread.scripture.text}”</span>
-        <span className="r">{spread.scripture.ref}</span>
+      <div className="bk-col">
+        <div className="bk-daytag">{spread.day}</div>
+        {spread.narration.map((para, i) => (
+          <p className="bk-narr" key={i}>{para}</p>
+        ))}
+        <button className="bk-readaloud" onClick={() => speak(spread.narration.join(' ') + ' ' + spread.scripture.text)}>
+          🔊 Read this page to me
+        </button>
+        <div className="bk-scrip">
+          <span className="sclab">From Scripture · WEB</span>
+          <span className="q">“{spread.scripture.text}”</span>
+          <span className="r">{spread.scripture.ref}</span>
+        </div>
       </div>
     </div>
   );
@@ -198,9 +199,7 @@ function SingleFace({ spread, isText, faceKey }: { spread: Spread; isText: boole
     return (
       <div className="bk-page left">
         <div className="bk-face" key={`si${faceKey}`}>
-          <div className="bk-illus">
-            <img src={spread.img} alt={spread.alt} />
-          </div>
+          <div className="bk-illus"><img src={spread.img} alt={spread.alt} /></div>
         </div>
       </div>
     );
@@ -211,8 +210,8 @@ function SingleFace({ spread, isText, faceKey }: { spread: Spread; isText: boole
   );
 }
 
-// One discovery activity: sequence the two moments just read. This demonstrates
-// the 'order' understanding (what the child actually shows), per the evidence rule.
+// Discovery: sequence the two moments just read. Demonstrates the 'order'
+// understanding (what the child actually shows), per the evidence rule.
 const MOMENTS = [
   { id: 'light', label: 'Light', img: '/assets/card-light.webp' },
   { id: 'sky', label: 'Sky', img: '/assets/card-sky.webp' },
@@ -223,6 +222,7 @@ function Discovery({ onDone }: { onDone: () => void }) {
   const [pool] = useState(() => shuffle(MOMENTS));
   const [placed, setPlaced] = useState<string[]>([]);
   const [msg, setMsg] = useState<string | null>(null);
+  const [hint, setHint] = useState(false);
   const done = placed.length === ORDER.length;
 
   const place = (id: string) => {
@@ -236,9 +236,8 @@ function Discovery({ onDone }: { onDone: () => void }) {
   };
 
   return (
-    <div className="bk-act">
-      <h3>Put the days in order</h3>
-      <p className="sub">You read how the first two days unfolded. Tap them in the order God made them.</p>
+    <>
+      <p className="bk-sub">Tap each picture into a spot, in the order God made them.</p>
 
       <div className="bk-slots">
         {ORDER.map((_, i) => {
@@ -264,16 +263,21 @@ function Discovery({ onDone }: { onDone: () => void }) {
         </div>
       )}
 
-      {msg && !done && <div className="bk-fb" style={{ background: '#f6efe0', borderColor: '#e2d2a6', color: '#6a5a38' }}>{msg}</div>}
+      {msg && !done && <div className="bk-hintline">{msg}</div>}
+
+      {!done && !hint && (
+        <button className="bk-hint" onClick={() => setHint(true)}>Ask Ezra for help</button>
+      )}
+      {!done && hint && (
+        <div className="bk-hintline">Remember the very beginning, when it was all dark. What did God make first of all?</div>
+      )}
 
       {done && (
         <>
           <div className="bk-fb">Light first, then the sky — just the way God made them.</div>
-          <div className="bk-next">
-            <button onClick={onDone}>Done →</button>
-          </div>
+          <div className="bk-next"><button onClick={onDone}>Done →</button></div>
         </>
       )}
-    </div>
+    </>
   );
 }
