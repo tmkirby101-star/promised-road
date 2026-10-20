@@ -144,8 +144,8 @@ export default function BookPrototype() {
             <div className="bk-guide-row">
               <div className="seal">📜</div>
               <div>
-                <div className="who">Ezra</div>
-                <p className="invite">“Light, then sky. Can you put those moments in order?”</p>
+                <div className="who">Isaiah</div>
+                <p className="invite">“You’ve seen the first two days. Which came first?”</p>
               </div>
             </div>
             <Discovery onDone={() => setPhase('done')} />
@@ -265,8 +265,10 @@ function Discovery({ onDone }: { onDone: () => void }) {
 
       {msg && !done && <div className="bk-hintline">{msg}</div>}
 
+      {/* Opening the reminder is answer support — in the real record this marks the
+          sequencing as guided, not independent. */}
       {!done && !hint && (
-        <button className="bk-hint" onClick={() => setHint(true)}>Ask Ezra for help</button>
+        <button className="bk-hint" onClick={() => setHint(true)}>Ask Isaiah for help</button>
       )}
       {!done && hint && (
         <div className="bk-hintline">Remember the very beginning, when it was all dark. What did God make first of all?</div>
