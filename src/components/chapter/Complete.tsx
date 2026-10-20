@@ -1,6 +1,7 @@
 import { GENESIS_01 } from '../../content/genesis01';
 import { useStore } from '../../lib/store';
 import { discoveries } from '../../lib/record';
+import IsaiahGuide from './IsaiahGuide';
 
 const CH = GENESIS_01;
 
@@ -28,8 +29,12 @@ export default function Complete({
   ];
 
   return (
-    <div className="card complete-card">
-      <div className="complete-mark">📜✨</div>
+    <>
+    <IsaiahGuide
+      pose="encouraging"
+      line="You have seen the good world God made, friend — and remembered how it all began. God made everything, and it was very good."
+    />
+    <div className="card complete-card" style={{ marginTop: 16 }}>
       <h3 className="complete-title">Well done!</h3>
       <p className="retelling" style={{ fontSize: 17 }}>
         You finished <strong>{CH.title}</strong>.
@@ -75,5 +80,6 @@ export default function Complete({
         </button>
       </div>
     </div>
+    </>
   );
 }

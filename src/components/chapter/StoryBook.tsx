@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { SPREADS, type Spread } from '../../prototype/creationSpreads';
 import { useStore } from '../../lib/store';
 import { speak, stopSpeaking } from '../../lib/speak';
+import IsaiahGuide from './IsaiahGuide';
 import '../../prototype/book.css';
 
 /**
@@ -13,7 +14,6 @@ import '../../prototype/book.css';
  */
 
 const CHID = 'genesis-01';
-const GUIDE = 'Isaiah';
 const TOTAL_FACES = SPREADS.length * 2; // [img0, text0, …]
 
 export default function StoryBook({ explorerId, onNext, replaying }: { explorerId: string; onNext: () => void; replaying?: boolean }) {
@@ -30,7 +30,12 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
     store.setCursor(explorerId, CHID, { storyPage: n });
   };
   const [narrow, setNarrow] = useState(false);
-  const [phase, setPhase] = useState<'reading' | 'bridge'>('reading');
+  // Isaiah welcomes the child on first entry; a resume or a replay goes straight to reading.
+  const [phase, setPhase] = useState<'welcome' | 'reading' | 'bridge'>(() => {
+    const rec = store.getChapter(explorerId, CHID);
+    const startFace = Math.min(Math.max(0, rec.cursor.storyPage || 0), TOTAL_FACES - 1);
+    return !replaying && startFace === 0 && !rec.participation.storyExperienced ? 'welcome' : 'reading';
+  });
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 820px)');
@@ -65,22 +70,32 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
   };
   const prev = () => setFace(single ? Math.max(0, face - 1) : Math.max(0, (spreadIndex - 1) * 2));
 
+  if (phase === 'welcome') {
+    return (
+      <div className="bk-root bk-embed">
+        <div className="bk-stage">
+          <IsaiahGuide
+            pose="welcoming"
+            line="Welcome, friend. I am Isaiah, and I keep the sacred scrolls. Together let us read how God made the world — a good world, made with great care."
+          >
+            <div className="bk-next">
+              <button onClick={() => setPhase('reading')}>Open the book →</button>
+            </div>
+          </IsaiahGuide>
+        </div>
+      </div>
+    );
+  }
+
   if (phase === 'bridge') {
     return (
       <div className="bk-root bk-embed">
         <div className="bk-stage">
-          <div className="bk-act bk-reveal">
-            <div className="bk-guide-row">
-              <div className="seal">📜</div>
-              <div>
-                <div className="who">{GUIDE}</div>
-                <p className="invite">“You have read how God made the world. Now let us remember it together.”</p>
-              </div>
-            </div>
+          <IsaiahGuide pose="reading" line="You have read how God made the world. Now let us remember it together.">
             <div className="bk-next">
               <button onClick={onNext}>{replaying ? 'Back to the recap →' : 'Let’s explore →'}</button>
             </div>
-          </div>
+          </IsaiahGuide>
         </div>
       </div>
     );

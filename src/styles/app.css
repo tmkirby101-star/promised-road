@@ -342,3 +342,15 @@ body.pr-large{ font-size:18px; }
 /* The story (book) step breaks out of the narrow activity column and tightens the
    vertical padding, so the book can fill most of the screen. */
 .inner-wrap.story-wrap{ max-width:1280px; padding:8px 14px 14px; }
+
+/* Isaiah guide panel — portrait beside his words at transitions (not over the book) */
+.guide-panel{ display:flex; gap:18px; align-items:flex-end; width:min(780px,94vw); margin:0 auto;
+  background:linear-gradient(180deg,#fdf8ec,#f3e9cf); border:1px solid #e0cfa0; border-radius:18px;
+  padding:18px 24px; box-shadow:0 24px 60px #04122855; }
+.guide-portrait{ width:150px; height:196px; object-fit:contain; object-position:bottom center; flex:0 0 auto; }
+.guide-body{ flex:1; min-width:0; align-self:center; }
+.guide-who{ font:600 12px system-ui,sans-serif; letter-spacing:2px; text-transform:uppercase; color:#b5893f; }
+.guide-say{ font:400 19px/1.55 Georgia,serif; color:#20324a; margin:6px 0 14px; }
+.guide-panel .bk-next, .guide-panel .step-actions{ margin-top:4px; }
+@media(max-width:560px){ .guide-panel{ flex-direction:column; align-items:center; text-align:center; }
+  .guide-portrait{ width:120px; height:150px; } }
