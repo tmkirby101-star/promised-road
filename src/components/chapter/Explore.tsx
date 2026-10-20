@@ -175,9 +175,12 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
   const [showHint, setShowHint] = useState(false);
   const [shakeId, setShakeId] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dropReady, setDropReady] = useState(false);
   const complete = placed.length === a.correctOrder.length;
+  const nextIndex = placed.length;
 
-  const tap = (id: string) => {
+  const place = (id: string) => {
     if (complete || placed.includes(id)) return;
     const expected = a.correctOrder[placed.length];
     if (id === expected) {
@@ -210,22 +213,29 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
   return (
     <div className="card">
       <p className="q-prompt">{a.title}</p>
-      <p className="retelling" style={{ fontSize: 16, marginBottom: 16 }}>{a.instruction}</p>
+      <p className="retelling" style={{ fontSize: 16, marginBottom: 16 }}>Tap a picture — or drag it — into each spot, in the order God made them.</p>
 
       <div className="order-slots">
         {a.correctOrder.map((_, i) => {
           const id = placed[i];
           const card = id ? a.cards.find((c) => c.id === id)! : null;
+          const isNext = !card && i === nextIndex;
           return (
-            <div key={i} className={`order-slot ${card ? 'filled' : ''}`}>
-              <span className="num">{i + 1}</span>
+            <div
+              key={i}
+              className={`order-slot ${card ? 'filled' : ''} ${isNext && dropReady ? 'drop-ready' : ''}`}
+              onDragOver={isNext ? (e) => { e.preventDefault(); setDropReady(true); } : undefined}
+              onDragLeave={isNext ? () => setDropReady(false) : undefined}
+              onDrop={isNext ? () => { setDropReady(false); if (dragId) place(dragId); } : undefined}
+            >
+              <span className="slot-num">{i + 1}</span>
               {card ? (
                 <>
-                  <span className="lab">{card.label}</span>
-                  <span className="day">{card.hint}</span>
+                  <img src={card.img} alt={card.label} />
+                  <span className="slot-lab">{card.label} · {card.hint}</span>
                 </>
               ) : (
-                <span className="lab" style={{ color: '#b9bcae' }}>?</span>
+                <span className="slot-empty">{isNext ? '↓' : '·'}</span>
               )}
             </div>
           );
@@ -234,16 +244,23 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
 
       {!complete && (
         <div className="order-pool">
-          {pool.map((c) => (
-            <button
-              key={c.id}
-              className={shakeId === c.id ? 'shake' : ''}
-              disabled={placed.includes(c.id)}
-              onClick={() => tap(c.id)}
-            >
-              {c.label}
-            </button>
-          ))}
+          {pool.map((c) => {
+            const used = placed.includes(c.id);
+            return (
+              <button
+                key={c.id}
+                className={`order-card ${shakeId === c.id ? 'shake' : ''}`}
+                disabled={used}
+                draggable={!used}
+                onDragStart={() => setDragId(c.id)}
+                onDragEnd={() => { setDragId(null); setDropReady(false); }}
+                onClick={() => place(c.id)}
+              >
+                <img src={c.img} alt={c.label} />
+                <span className="lab">{c.label}</span>
+              </button>
+            );
+          })}
         </div>
       )}
 

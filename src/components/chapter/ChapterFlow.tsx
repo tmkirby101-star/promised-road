@@ -68,7 +68,7 @@ export default function ChapterFlow({
   }, [step, explorerId, onLeave, onParent]);
 
   return (
-    <div className="app-journey">
+    <div className="app-journey chapter-bg">
       <InnerBar explorerId={explorerId} onLeave={onLeave} onParent={onParent} />
       <div className="inner-wrap">
         <div className="chap-head">

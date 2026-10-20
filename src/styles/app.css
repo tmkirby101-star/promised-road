@@ -223,3 +223,74 @@ body.pr-large{ font-size:18px; }
 .pill{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:#eef2e9;color:#4a5a4f;margin:2px 6px 2px 0}
 .pill.on{background:#eaf3ef;color:#255f4f}
 .writing-sample{background:#f6f2e6;border-radius:10px;padding:14px 16px;font:400 17px/1.6 Georgia,serif;color:#1d403d}
+
+/* ============ STORYBOOK RE-SKIN (approved navy / gold / paper) ============ */
+:root{ --nv:#102f50; --nv2:#0b2743; --nv-ink:#173755; --nv-blue:#2d5f8b; --sb-gold:#b5893f; --paper:#fffcf3; }
+
+/* deep-blue backdrop for the chapter, paper cards float on top like storybook pages */
+.app-journey.chapter-bg{ background:
+  radial-gradient(1200px 500px at 50% -8%, #1d4a77 0%, transparent 60%),
+  linear-gradient(180deg,#123a60 0%,#0b2743 100%); }
+.app-journey.chapter-bg .inner-bar{ background:#0b2340; border-bottom-color:#1d3f63; }
+.app-journey.chapter-bg .inner-bar button{ background:#15395c; border-color:#2b547d; color:#eaf1fb; }
+.app-journey.chapter-bg .inner-bar button:hover{ background:#1b466f; border-color:var(--sb-gold); }
+.app-journey.chapter-bg .inner-bar button[aria-pressed=true]{ background:#24577f; border-color:var(--sb-gold); color:#fff6e2; }
+.app-journey.chapter-bg .inner-bar .ghost{ background:transparent; border-color:transparent; color:#b9cde3; }
+.app-journey.chapter-bg .chap-kicker{ color:#e9c882; }
+.app-journey.chapter-bg .chap-title{ color:#fff6e2; }
+.app-journey.chapter-bg .chap-passage{ color:#b9cde3; }
+.app-journey.chapter-bg .progress-row span{ background:#20446b; }
+.app-journey.chapter-bg .progress-row span.on{ background:var(--sb-gold); }
+
+/* cards become warm storybook paper with a gold hairline */
+.chapter-bg .card{ background:var(--paper); border:1px solid #e6d5ad; border-radius:18px;
+  box-shadow:0 18px 44px #04142aa8, 0 2px 0 #fff inset; }
+.chapter-bg .q-prompt, .chapter-bg .story-heading, .chapter-bg .chap-title{ color:var(--nv-ink); }
+.chapter-bg .guide-badge{ background:var(--nv); color:#f3e7c6; }
+.chapter-bg .guide-name{ color:var(--sb-gold); }
+.chapter-bg .scripture{ border-left-color:var(--sb-gold); background:#f7efdd; }
+.chapter-bg .scripture .q{ color:var(--nv-ink); }
+.chapter-bg .scripture .ref{ color:#9a6b2c; }
+
+/* primary / secondary / accents -> navy + gold */
+.chapter-bg .pr-primary, .complete-card .pr-primary{ background:var(--nv); border-color:var(--nv); color:#fdf4dd; }
+.chapter-bg .pr-primary:hover:not(:disabled){ background:#184272; }
+.chapter-bg .pr-secondary{ border-color:#cab98f; background:#fffdf7; color:#173755; }
+.chapter-bg .choice{ font-size:19px; padding:17px 20px; border-color:#e3d4ae; background:#fff; }
+.chapter-bg .choice:hover:not(:disabled){ border-color:var(--sb-gold); }
+.chapter-bg .choice.correct{ background:#eaf3ec; border-color:#3f8f5f; }
+.chapter-bg .choice.wrong{ background:#f7e8e4; border-color:#c57b63; }
+.chapter-bg .memory-opts button{ font-size:19px; }
+.chapter-bg .subject-grid button[aria-pressed=true],
+.chapter-bg .selfcheck .opts button[aria-pressed=true]{ border-color:var(--nv-blue); background:#eaf1fb; }
+
+/* ---- illustrated ordering cards ---- */
+.order-pool{ gap:14px; }
+.order-card{ display:flex; flex-direction:column; align-items:stretch; width:158px; border:2px solid #e0cfa6;
+  border-radius:14px; overflow:hidden; background:var(--paper); cursor:grab; box-shadow:0 8px 20px #06182f33; transition:all .15s; padding:0; }
+.order-card:hover:not(:disabled){ border-color:var(--sb-gold); transform:translateY(-3px); }
+.order-card:disabled{ opacity:.35; cursor:default; }
+.order-card.shake{ animation:prshake .3s; }
+.order-card img{ width:100%; height:92px; object-fit:cover; display:block; }
+.order-card .lab{ padding:8px 6px; font-size:14px; font-weight:600; color:var(--nv-ink); text-align:center; }
+.order-slot{ width:158px; min-height:92px; overflow:hidden; padding:0; position:relative; background:#0e3254; border-color:#2b547d; }
+.order-slot.filled{ border-style:solid; border-color:var(--sb-gold); }
+.order-slot .slot-num{ position:absolute; top:6px; left:8px; z-index:2; background:#0b2743cc; color:#fff; font-size:12px; border-radius:20px; padding:1px 8px; }
+.order-slot .slot-empty{ color:#7fa0c4; font-size:26px; display:flex; align-items:center; justify-content:center; height:92px; }
+.order-slot img{ width:100%; height:92px; object-fit:cover; display:block; }
+.order-slot .slot-lab{ position:absolute; bottom:0; left:0; right:0; background:#0b2743cc; color:#fff; font-size:12px; padding:3px 6px; text-align:center; }
+.order-slot.drop-ready{ outline:3px dashed var(--sb-gold); outline-offset:2px; }
+
+/* ---- illustrated writing subjects ---- */
+.subject-grid button{ padding:0; overflow:hidden; border-radius:14px; width:140px; }
+.subject-grid button img{ width:100%; height:84px; object-fit:cover; display:block; }
+.subject-grid button .lab{ padding:8px; font-size:15px; }
+.pinned{ padding:0; overflow:hidden; }
+.pinned img{ width:110px; height:84px; object-fit:cover; display:block; }
+.pinned .pin-body{ padding:12px 16px; }
+
+/* writing step chips */
+.wstep{ display:flex; gap:8px; justify-content:center; margin-bottom:18px; }
+.wstep span{ font-size:12px; color:#8aa3bf; padding:4px 12px; border-radius:20px; background:#ffffff14; }
+.chapter-bg .wstep span{ color:#9db6d2; }
+.wstep span.on{ background:var(--sb-gold); color:#2a1c06; font-weight:700; }

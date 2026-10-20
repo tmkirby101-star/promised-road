@@ -20,6 +20,7 @@ export interface OrderCard {
   id: string;
   label: string;
   hint: string; // day label shown after placing
+  img: string; // illustrated creation card
 }
 
 export const GENESIS_01 = {
@@ -127,10 +128,10 @@ export const GENESIS_01 = {
     instruction: 'These are four of the days God made the world. Tap them in the order God made them.',
     help: 'It was dark at first — what did God make before anything could be seen? Start there, then move forward through the days.',
     cards: [
-      { id: 'light', label: 'Light', hint: 'Day 1' },
-      { id: 'sky', label: 'Sky', hint: 'Day 2' },
-      { id: 'land', label: 'Land & Plants', hint: 'Day 3' },
-      { id: 'lights', label: 'Sun, Moon & Stars', hint: 'Day 4' },
+      { id: 'light', label: 'Light', hint: 'Day 1', img: '/assets/card-light.webp' },
+      { id: 'sky', label: 'Sky', hint: 'Day 2', img: '/assets/card-sky.webp' },
+      { id: 'land', label: 'Land & Plants', hint: 'Day 3', img: '/assets/card-land.webp' },
+      { id: 'lights', label: 'Sun, Moon & Stars', hint: 'Day 4', img: '/assets/card-lights.webp' },
     ] as OrderCard[],
     correctOrder: ['light', 'sky', 'land', 'lights'],
     // specific feedback keyed by the wrong card a child tries to place next
@@ -146,12 +147,12 @@ export const GENESIS_01 = {
     example: 'God made birds. Birds have wings and feathers.',
     starter: 'God made ____. I notice ____.',
     subjects: [
-      { id: 'birds', label: 'birds', icon: '🐦' },
-      { id: 'trees', label: 'trees', icon: '🌳' },
-      { id: 'sea', label: 'the sea', icon: '🌊' },
-      { id: 'animals', label: 'animals', icon: '🦌' },
-      { id: 'light', label: 'light', icon: '☀️' },
-      { id: 'stars', label: 'stars', icon: '✨' },
+      { id: 'birds', label: 'birds', img: '/assets/card-fishbirds.webp' },
+      { id: 'trees', label: 'trees', img: '/assets/card-land.webp' },
+      { id: 'sea', label: 'the sea', img: '/assets/card-sky.webp' },
+      { id: 'animals', label: 'animals', img: '/assets/card-animals.webp' },
+      { id: 'light', label: 'light', img: '/assets/card-light.webp' },
+      { id: 'stars', label: 'stars', img: '/assets/card-lights.webp' },
     ],
     connectBack: (label: string) => `${cap(label)} are part of the creation God called very good.`,
     gratitudeInvite: 'If you like, add why you are thankful for it.',

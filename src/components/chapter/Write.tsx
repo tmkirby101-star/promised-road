@@ -36,13 +36,17 @@ function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => voi
   const setGratitude = (v: string) => { setGratitudeState(v); store.setDraft(explorerId, CH.id, { gratitude: v }); };
 
   const subject = w.subjects.find((s) => s.id === subjectId) ?? null;
-  const canSave = !!subject && text.trim().length > 0;
+  // Resume exactly: no picture → pick; both self-checks already answered → check;
+  // otherwise land back on write so an unfinished sentence is right there to continue.
+  const [micro, setMicro] = useState<'pick' | 'write' | 'check'>(() =>
+    !d0.subjectId ? 'pick' : d0.named && d0.noticed ? 'check' : 'write',
+  );
 
   const save = () => {
     if (!subject) return;
     store.saveWriting(explorerId, CH.id, {
       subject: subject.label,
-      subjectImage: subject.icon,
+      subjectImage: subject.img,
       text: text.trim(),
       selfChecks: { named, noticed },
       gratitude: gratitude.trim() || undefined,
@@ -51,51 +55,81 @@ function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => voi
     onDone();
   };
 
+  const Pinned = () =>
+    subject ? (
+      <div className="pinned" style={{ marginBottom: 16 }}>
+        <img src={subject.img} alt={subject.label} />
+        <div className="pin-body">
+          <div className="lab">{subject.label}</div>
+          <button
+            className="pr-secondary"
+            style={{ padding: '4px 12px', fontSize: 12, marginTop: 4 }}
+            onClick={() => { setSubjectId(null); setMicro('pick'); }}
+          >
+            Change picture
+          </button>
+        </div>
+      </div>
+    ) : null;
+
   return (
     <div className="card">
-      <p className="q-prompt">{w.prompt}</p>
-      <div className="feedback" style={{ background: '#f3efe2', color: '#6a5a38', marginTop: 0 }}>
-        For example: “{w.example}”
+      <div className="wstep">
+        <span className={micro === 'pick' ? 'on' : ''}>1 · Pick</span>
+        <span className={micro === 'write' ? 'on' : ''}>2 · Write</span>
+        <span className={micro === 'check' ? 'on' : ''}>3 · Check</span>
       </div>
 
-      {!subject ? (
+      {micro === 'pick' && (
         <>
-          <p className="starter" style={{ marginTop: 16 }}>Pick a picture to write about:</p>
+          <p className="q-prompt">{w.prompt}</p>
+          <p className="starter">Pick a picture of something God made:</p>
           <div className="subject-grid">
             {w.subjects.map((s) => (
-              <button key={s.id} aria-pressed={false} onClick={() => setSubjectId(s.id)}>
-                <span className="ic">{s.icon}</span>
+              <button
+                key={s.id}
+                aria-pressed={subjectId === s.id}
+                onClick={() => {
+                  setSubjectId(s.id);
+                  setMicro('write');
+                }}
+              >
+                <img src={s.img} alt={s.label} />
                 <span className="lab">{s.label}</span>
               </button>
             ))}
           </div>
         </>
-      ) : (
-        <>
-          <div className="pinned" style={{ marginTop: 16 }}>
-            <span className="ic">{subject.icon}</span>
-            <div>
-              <div className="lab">{subject.label}</div>
-              <button
-                className="pr-secondary"
-                style={{ padding: '4px 12px', fontSize: 12, marginTop: 4 }}
-                onClick={() => setSubjectId(null)}
-              >
-                Change
-              </button>
-            </div>
-          </div>
+      )}
 
+      {micro === 'write' && subject && (
+        <>
+          <Pinned />
+          <p className="q-prompt" style={{ fontSize: 20 }}>Tell one thing you notice about {subject.label}.</p>
+          <div className="feedback" style={{ background: '#f3efe2', color: '#6a5a38', marginTop: 0 }}>
+            For example: “{w.example}”
+          </div>
           <textarea
             className="write-ta"
+            style={{ marginTop: 12 }}
             placeholder="Write your sentence here…"
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
           <p className="starter">You can start with: “{w.starter}”</p>
-
           {text.trim().length > 0 && <div className="connect-back">{w.connectBack(subject.label)}</div>}
+          <div className="step-actions">
+            <button className="pr-secondary" onClick={() => setMicro('pick')}>← Back</button>
+            <button className="pr-primary" disabled={text.trim().length === 0} onClick={() => setMicro('check')}>
+              Next →
+            </button>
+          </div>
+        </>
+      )}
 
+      {micro === 'check' && subject && (
+        <>
+          <Pinned />
           <div className="selfcheck">
             <div className="q">Did you name something God made?</div>
             <div className="opts">
@@ -133,10 +167,8 @@ function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => voi
           </div>
 
           <div className="step-actions">
-            <span />
-            <button className="pr-primary" disabled={!canSave} onClick={save}>
-              Save my writing →
-            </button>
+            <button className="pr-secondary" onClick={() => setMicro('write')}>← Back</button>
+            <button className="pr-primary" onClick={save}>Save my writing →</button>
           </div>
         </>
       )}
