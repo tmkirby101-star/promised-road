@@ -1,49 +1,16 @@
 import { useEffect, useState } from 'react';
-import { speak } from '../lib/speak';
+import { speak, stopSpeaking } from '../lib/speak';
 import './book.css';
+import { SPREADS, type Spread } from './creationSpreads';
 
-/**
- * Isolated storybook prototype. Reachable at #book; does not touch the working
- * chapter. Day One uses purpose-made portrait artwork; Day Two retains the
- * existing creation card while the illustration direction is reviewed.
- *
- * The left page is PORTRAIT: artwork must be composed for that upright space,
- * not a landscape scene.
- */
-
-interface Spread {
-  key: string;
-  day: string;
-  img: string;
-  alt: string;
-  narration: string[]; // two short paragraphs, broken at a story beat
-  scripture: { text: string; ref: string };
+/** Isolated seven-day storybook preview at #book. It never writes chapter evidence. */
+const BOOKMARK_KEY = 'promised-road:creation-bookmark:v1';
+function loadBookmark(): {face:number; bigText:boolean} {
+  try {
+    const data = JSON.parse(localStorage.getItem(BOOKMARK_KEY) || '{}');
+    return {face: Number.isInteger(data.face) ? Math.max(0, Math.min(SPREADS.length * 2 - 1, data.face)) : 0, bigText: data.bigText === true};
+  } catch { return {face:0, bigText:false}; }
 }
-
-const SPREADS: Spread[] = [
-  {
-    key: 'day1',
-    day: 'Day One',
-    img: '/assets/scene-day1-light-v1.webp',
-    alt: 'Light breaking over the dark waters',
-    narration: [
-      'The earth lay dark and empty, and the deep waters were still. Then God spoke into the darkness: “Let there be light!” — and there was light.',
-      'God saw that the light was good, and he set the light apart from the darkness. He called the light Day, and the darkness he called Night.',
-    ],
-    scripture: { text: 'God said, “Let there be light,” and there was light.', ref: 'Genesis 1:3' },
-  },
-  {
-    key: 'day2',
-    day: 'Day Two',
-    img: '/assets/card-sky.webp',
-    alt: 'The open sky stretched high above the waters',
-    narration: [
-      'God made a wide, open space and stretched it out over the waters, setting the waters below apart from the waters above.',
-      'God called that great open space Sky. It arched high over everything, and there was evening and morning — a second day.',
-    ],
-    scripture: { text: 'God called the expanse “sky”.', ref: 'Genesis 1:8' },
-  },
-];
 
 const TOTAL_FACES = SPREADS.length * 2; // [img0, text0, img1, text1]
 
@@ -60,9 +27,9 @@ function shuffle<T>(a: T[]): T[] {
 
 export default function BookPrototype() {
   const [phase, setPhase] = useState<Phase>('book');
-  const [face, setFace] = useState(0);
+  const [face, setFace] = useState(() => loadBookmark().face);
   const [closing, setClosing] = useState(false);
-  const [bigText, setBigText] = useState(false);
+  const [bigText, setBigText] = useState(() => loadBookmark().bigText);
   const [narrow, setNarrow] = useState(false);
 
   useEffect(() => {
@@ -72,6 +39,11 @@ export default function BookPrototype() {
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
   }, []);
+
+  useEffect(() => {
+    try {localStorage.setItem(BOOKMARK_KEY, JSON.stringify({face, bigText}));} catch { /* reading works without storage */ }
+  }, [face, bigText]);
+  useEffect(() => {stopSpeaking(); return stopSpeaking;}, [face, phase]);
 
   const single = bigText || narrow;
   const spreadIndex = Math.floor(face / 2);
@@ -98,8 +70,13 @@ export default function BookPrototype() {
   return (
     <div className={rootClass}>
       <div className="bk-bar">
-        <span className="bk-kick">Prototype · Genesis · The Story</span>
+        <span className="bk-kick">Genesis · A World Made Good</span>
         <div className="bk-tools">
+          <label className="bk-day-picker">Go to
+            <select aria-label="Choose a creation day" value={spreadIndex} onChange={(e) => {setClosing(false); setPhase('book'); setFace(Number(e.target.value) * 2);}}>
+              {SPREADS.map((s,i) => <option key={s.key} value={i}>{s.day}</option>)}
+            </select>
+          </label>
           <button aria-pressed={bigText} onClick={() => setBigText((v) => !v)}>A+ Bigger text</button>
           <button onClick={() => { setPhase('book'); setFace(0); }}>↺ Restart</button>
         </div>
@@ -146,7 +123,7 @@ export default function BookPrototype() {
               <div className="seal">📜</div>
               <div>
                 <div className="who">Isaiah</div>
-                <p className="invite">“You’ve seen the first two days. Which came first?”</p>
+                <p className="invite">“God made a good world. Let’s remember four moments from the story.”</p>
               </div>
             </div>
             <Discovery onDone={() => setPhase('done')} />
@@ -159,7 +136,8 @@ export default function BookPrototype() {
           <div className="bk-done bk-reveal">
             <div className="big">🌿</div>
             <h3>Well remembered!</h3>
-            <p>Your bookmark is saved at Day {SPREADS.length}. You can read on, or come back any time.</p>
+            <p>You explored all seven days, from the first light to God’s finished work. Return to any page whenever you like.</p>
+            <p className="bk-preview-note">Storybook preview · This does not award chapter completion or a Genesis stamp.</p>
             <div className="row">
               <button className="ghost" onClick={() => { setPhase('book'); setFace((SPREADS.length - 1) * 2); }}>
                 ← Back to the book
@@ -178,16 +156,18 @@ function TextFace({ spread, faceKey }: { spread: Spread; faceKey: string }) {
     <div className="bk-face" key={faceKey}>
       <div className="bk-col">
         <div className="bk-daytag">{spread.day}</div>
+        <h1 className="bk-story-title">{spread.title}</h1>
         {spread.narration.map((para, i) => (
           <p className="bk-narr" key={i}>{para}</p>
         ))}
-        <button className="bk-readaloud" onClick={() => speak(spread.narration.join(' ') + ' ' + spread.scripture.text)}>
+        <button className="bk-readaloud" onClick={() => speak(spread.narration.join(' ') + ' From Scripture. ' + spread.scripture.text + (spread.secondScripture ? ' ' + spread.secondScripture.text : ''))}>
           🔊 Read this page to me
         </button>
         <div className="bk-scrip">
           <span className="sclab">From Scripture · WEB</span>
           <span className="q">“{spread.scripture.text}”</span>
           <span className="r">{spread.scripture.ref}</span>
+          {spread.secondScripture && <><span className="q second">“{spread.secondScripture.text}”</span><span className="r">{spread.secondScripture.ref}</span></>}
         </div>
       </div>
     </div>
@@ -211,13 +191,9 @@ function SingleFace({ spread, isText, faceKey }: { spread: Spread; isText: boole
   );
 }
 
-// Discovery: sequence the two moments just read. Demonstrates the 'order'
-// understanding (what the child actually shows), per the evidence rule.
-const MOMENTS = [
-  { id: 'light', label: 'Light', img: '/assets/card-light.webp' },
-  { id: 'sky', label: 'Sky', img: '/assets/card-sky.webp' },
-];
-const ORDER = ['light', 'sky'];
+// Four selected moments, not a seven-item memory gate. No evidence is awarded by this preview.
+const MOMENTS = SPREADS.slice(0,4).map((s,i) => ({id:s.key, label:['Light','Sky','Land & plants','Sun, moon & stars'][i], img:s.img}));
+const ORDER = MOMENTS.map(m => m.id);
 
 function Discovery({ onDone }: { onDone: () => void }) {
   const [pool] = useState(() => shuffle(MOMENTS));
@@ -232,13 +208,13 @@ function Discovery({ onDone }: { onDone: () => void }) {
       setPlaced([...placed, id]);
       setMsg(null);
     } else {
-      setMsg('Think back — which did God make first, the light or the sky?');
+      setMsg('Not quite. Think back to the story. Which of these moments came next?');
     }
   };
 
   return (
     <>
-      <p className="bk-sub">Tap each picture into a spot, in the order God made them.</p>
+      <p className="bk-sub">These are four selected moments. Tap the pictures in the order they happened.</p>
 
       <div className="bk-slots">
         {ORDER.map((_, i) => {
@@ -264,7 +240,7 @@ function Discovery({ onDone }: { onDone: () => void }) {
         </div>
       )}
 
-      {msg && !done && <div className="bk-hintline">{msg}</div>}
+      {msg && !done && <div role="status" className="bk-hintline">{msg}</div>}
 
       {/* Opening the reminder is answer support — in the real record this marks the
           sequencing as guided, not independent. */}
@@ -272,12 +248,12 @@ function Discovery({ onDone }: { onDone: () => void }) {
         <button className="bk-hint" onClick={() => setHint(true)}>Ask Isaiah for help</button>
       )}
       {!done && hint && (
-        <div className="bk-hintline">Remember the very beginning, when it was all dark. What did God make first of all?</div>
+        <div className="bk-hintline">{['At the beginning it was dark. What came into the darkness?', 'After light, God made an open space above the waters.', 'Then dry land appeared and plants grew.', 'Next came the lights that mark days, seasons, and years.'][placed.length]}</div>
       )}
 
       {done && (
         <>
-          <div className="bk-fb">Light first, then the sky — just the way God made them.</div>
+          <div className="bk-fb">Light, sky, land and plants, then the lights in the sky. You remembered their order!</div>
           <div className="bk-next"><button onClick={onDone}>Done →</button></div>
         </>
       )}

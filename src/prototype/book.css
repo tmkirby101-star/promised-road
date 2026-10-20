@@ -22,7 +22,7 @@
 
 /* ---- The book ---- */
 .bk-book{
-  width:min(1040px, 94vw); aspect-ratio:16/10.4; max-height:70svh;
+  width:min(1040px, 94vw, calc(70svh * 1.53846)); aspect-ratio:16/10.4; max-height:70svh;
   display:flex; position:relative; border-radius:10px;
   background:linear-gradient(180deg,#fefaf0,var(--paper));
   box-shadow:0 30px 70px #04122866, 0 2px 0 #00000022;
@@ -39,7 +39,7 @@
 .bk-illus img{ width:100%; height:100%; object-fit:cover; display:block; border-radius:10px 0 0 10px; }
 
 /* Right page = reading column. */
-.bk-page.right{ padding:34px 40px; background:linear-gradient(250deg,#fdf8ec,#f7eed9); border-radius:0 10px 10px 0; }
+.bk-page.right{ padding:30px 34px; overflow:auto; background:linear-gradient(250deg,#fdf8ec,#f7eed9); border-radius:0 10px 10px 0; }
 .bk-col{ width:100%; max-width:34em; margin:0 auto; display:flex; flex-direction:column; height:100%; }
 
 /* center crease */
@@ -58,7 +58,7 @@
   background:inherit; clip-path:polygon(0 0,100% 0,100% 100%,50% 60%,0 100%); }
 
 .bk-daytag{ font:600 12px system-ui,sans-serif; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
-.bk-narr{ font-size:clamp(16px,1.5vw,20px); line-height:1.62; color:var(--ink); margin:0 0 14px; }
+.bk-narr{ font-size:clamp(18px,1.5vw,20px); line-height:1.62; color:var(--ink); margin:0 0 14px; }
 .bk-scrip{
   margin-top:20px; border-left:3px solid var(--gold); background:#faf2dc;
   padding:13px 16px; border-radius:0 8px 8px 0;
@@ -86,7 +86,7 @@
 .bk-nav .bk-page-count{ font:600 13px system-ui,sans-serif; color:#cfe0f3; letter-spacing:1px; }
 
 /* ---- Single-page (narrow / big text): one centered reading column ---- */
-.bk-root.single .bk-book{ aspect-ratio:auto; min-height:64svh; max-height:74svh; }
+.bk-root.single .bk-book{ width:min(680px,94vw); aspect-ratio:auto; min-height:64svh; max-height:74svh; }
 .bk-root.single .bk-page{ border-radius:10px; }
 .bk-root.single .bk-page.left{ border-radius:10px; }
 .bk-root.single .bk-illus img{ border-radius:10px; }
@@ -134,3 +134,17 @@
 .bk-done .row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 .bk-done button{ font:600 15px system-ui,sans-serif; color:#241803; background:linear-gradient(180deg,var(--gold2),var(--gold)); border:0; border-radius:12px; padding:13px 26px; cursor:pointer; }
 .bk-done .ghost{ background:#0000; border:1px solid #c9b78a; color:var(--nv); }
+
+.bk-day-picker{display:flex;align-items:center;gap:8px;font:600 13px system-ui,sans-serif;color:#eaf1fb;}
+.bk-day-picker select{background:#163a5e;color:#eaf1fb;border:1px solid #ffffff40;border-radius:9px;padding:7px 10px;font:inherit;}
+.bk-root button:focus-visible,.bk-root select:focus-visible{outline:3px solid #e8c77b;outline-offset:4px;}
+.bk-story-title{font:normal clamp(23px,2vw,29px)/1.15 Georgia,serif;color:var(--nv);margin:0 0 18px;}
+.bk-scrip .second{display:block;margin-top:14px;}
+.bk-preview-note{font:13px/1.5 system-ui,sans-serif;}
+.bk-root.single .bk-illus{height:70svh;background:#0b2240;}
+.bk-root.single .bk-illus img{object-fit:contain;}
+@media(max-width:600px){
+ .bk-bar{flex-wrap:wrap;padding:12px;}.bk-bar .bk-kick{font-size:10px;letter-spacing:1px;}
+ .bk-stage{padding:16px 10px 8px;}.bk-nav button{padding:12px 14px;}.bk-nav .bk-page-count{font-size:11px;}
+ .bk-slot,.bk-card{width:125px;}.bk-act{padding:22px 16px;}
+}
