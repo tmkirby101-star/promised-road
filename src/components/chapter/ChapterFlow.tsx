@@ -71,7 +71,7 @@ export default function ChapterFlow({
 
   const startReplay = (section: 'story' | 'explore' | 'write') => {
     if (section === 'story') store.setCursor(explorerId, CH.id, { storyPage: 0 });
-    if (section === 'explore') store.setCursor(explorerId, CH.id, { exploreSub: 'q0' });
+    if (section === 'explore') store.setCursor(explorerId, CH.id, { exploreSub: 'order' });
     if (section === 'write') store.setCursor(explorerId, CH.id, { writeSub: 'compose' });
     setReplaying(true);
     go(section);

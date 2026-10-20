@@ -137,6 +137,16 @@ export const GENESIS_01 = {
     },
   ],
 
+  // "Complete God's declaration" — a fill-in interaction for the 'good' truth.
+  declaration: {
+    before: 'God looked at everything He had made, and it was very',
+    answer: 'good',
+    after: '.',
+    options: ['good', 'small', 'dark'],
+    feedback: 'Yes — “God saw everything that he had made, and, behold, it was very good.”',
+    tryAgain: 'Look again — what did God say when He saw His whole creation?',
+  },
+
   memory: {
     ref: 'Genesis 1:1',
     full: 'In the beginning, God created the heavens and the earth.',

@@ -26,45 +26,44 @@ export default function Explore({ explorerId, onNext, replaying }: { explorerId:
     setSubState(s);
   };
 
-  const qIndex = sub === 'q0' ? 0 : sub === 'q1' ? 1 : sub === 'q2' ? 2 : sub === 'q3' ? 3 : -1;
-
   const promptText = useMemo(() => {
-    if (qIndex >= 0) return CH.questions[qIndex].prompt;
-    if (sub === 'memory') return 'Let us practice our memory verse. ' + CH.memory.full;
-    return CH.activity.instruction;
-  }, [sub, qIndex]);
+    if (sub === 'order') return CH.activity.instruction;
+    if (sub === 'q0') return CH.questions[0].prompt;
+    if (sub === 'q1') return 'Finish what God said. ' + CH.declaration.before + ' …';
+    if (sub === 'q2') return CH.questions[2].prompt;
+    if (sub === 'q3') return CH.questions[3].prompt;
+    return 'Let us practice our memory verse. ' + CH.memory.full;
+  }, [sub]);
 
   useEffect(() => {
     if (narration) speak(promptText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sub, narration]);
 
-  // Understand (four truths), then Remember (verse), then Sequence (the order).
-  // Distinct keys so each question mounts with fresh state (no carryover).
-  const total = CH.questions.length;
+  // Remember the story first (sequence), then the four truths with varied responses
+  // — choose, complete, look & choose, connect — then the verse. The child's rhythm
+  // is look, move, choose, say, write. Distinct keys so each mounts with fresh state.
+  if (sub === 'order')
+    return <OrderCard key="order" explorerId={explorerId} onDone={() => go('q0')} />;
   if (sub === 'q0')
-    return <QuestionCard key="q0" q={CH.questions[0]} n={1} total={total} explorerId={explorerId} onDone={() => go('q1')} />;
+    return <QuestionCard key="q0" kicker="CHOOSE" q={CH.questions[0]} explorerId={explorerId} onDone={() => go('q1')} />;
   if (sub === 'q1')
-    return <QuestionCard key="q1" q={CH.questions[1]} n={2} total={total} explorerId={explorerId} onDone={() => go('q2')} />;
+    return <DeclarationCard key="q1" explorerId={explorerId} onDone={() => go('q2')} />;
   if (sub === 'q2')
-    return <QuestionCard key="q2" q={CH.questions[2]} n={3} total={total} explorerId={explorerId} onDone={() => go('q3')} />;
+    return <QuestionCard key="q2" kicker="LOOK & CHOOSE" q={CH.questions[2]} explorerId={explorerId} onDone={() => go('q3')} />;
   if (sub === 'q3')
-    return <QuestionCard key="q3" q={CH.questions[3]} n={4} total={total} explorerId={explorerId} onDone={() => go('memory')} />;
-  if (sub === 'memory')
-    return <MemoryCard key="memory" explorerId={explorerId} onDone={() => go('order')} />;
-  return <OrderCard key="order" explorerId={explorerId} replaying={replaying} onDone={onNext} />;
+    return <ConnectCard key="q3" explorerId={explorerId} onDone={() => go('memory')} />;
+  return <MemoryCard key="memory" explorerId={explorerId} replaying={replaying} onDone={onNext} />;
 }
 
 function QuestionCard({
   q,
-  n,
-  total,
+  kicker,
   explorerId,
   onDone,
 }: {
   q: { key: 'created' | 'good' | 'image' | 'complete'; prompt: string; choices: Choice[]; banner?: string };
-  n: number;
-  total: number;
+  kicker: string;
   explorerId: string;
   onDone: () => void;
 }) {
@@ -100,7 +99,7 @@ function QuestionCard({
 
   return (
     <div className="card">
-      <div className="guide-name">UNDERSTAND · {n} of {total}</div>
+      <div className="guide-name">{kicker}</div>
       {q.banner && <img className="scene-banner" src={q.banner} alt="" />}
       <p className="q-prompt">{q.prompt}</p>
       <div className="choice-grid">
@@ -128,7 +127,7 @@ function QuestionCard({
   );
 }
 
-function MemoryCard({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
+function MemoryCard({ explorerId, onDone, replaying }: { explorerId: string; onDone: () => void; replaying?: boolean }) {
   const store = useStore();
   const m = CH.memory;
   const [opts] = useState(() => shuffle(m.options));
@@ -188,7 +187,7 @@ function MemoryCard({ explorerId, onDone }: { explorerId: string; onDone: () => 
           <div className="step-actions">
             <span />
             <button className="pr-primary" onClick={onDone}>
-              Next →
+              {replaying ? 'Back to the recap →' : 'On to writing →'}
             </button>
           </div>
         </>
@@ -197,7 +196,109 @@ function MemoryCard({ explorerId, onDone }: { explorerId: string; onDone: () => 
   );
 }
 
-function OrderCard({ explorerId, onDone, replaying }: { explorerId: string; onDone: () => void; replaying?: boolean }) {
+// Complete God's declaration — fill in the word (records the 'good' understanding).
+function DeclarationCard({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
+  const store = useStore();
+  const d = CH.declaration;
+  const [opts] = useState(() => shuffle(d.options));
+  const [done, setDone] = useState(false);
+  const [wrong, setWrong] = useState(0);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const pick = (word: string) => {
+    if (done) return;
+    if (word === d.answer) {
+      store.addAttempt(explorerId, CH.id, { understanding: 'good', source: 'declaration.good', correct: true, usedAnswerHint: wrong > 0 });
+      setDone(true);
+      setMsg(d.feedback);
+    } else {
+      store.addAttempt(explorerId, CH.id, { understanding: 'good', source: 'declaration.good', correct: false, usedAnswerHint: false });
+      setWrong((n) => n + 1);
+      setMsg(d.tryAgain);
+    }
+  };
+
+  return (
+    <div className="card">
+      <div className="guide-name">COMPLETE IT</div>
+      <p className="q-prompt">Finish what God said about everything He had made:</p>
+      <p className="memory-verse">
+        {d.before} <span className="memory-blank">{done ? d.answer : '______'}</span>{d.after}
+      </p>
+      {!done ? (
+        <>
+          <div className="memory-opts">
+            {opts.map((w) => (
+              <button key={w} onClick={() => pick(w)}>{w}</button>
+            ))}
+          </div>
+          {msg && <div className="feedback try" style={{ marginTop: 16 }}>{msg}</div>}
+        </>
+      ) : (
+        <>
+          <div className="feedback good">{msg}</div>
+          <div className="step-actions">
+            <span />
+            <button className="pr-primary" onClick={onDone}>Next →</button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// Connect the seventh-day rest to its meaning (records the 'complete' understanding).
+function ConnectCard({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
+  const store = useStore();
+  const q = CH.questions[3]; // complete
+  const [attempts, setAttempts] = useState(0);
+  const [picked, setPicked] = useState<string | null>(null);
+  const [resolved, setResolved] = useState(false);
+  const [fb, setFb] = useState<{ good: boolean; text: string } | null>(null);
+
+  const choose = (c: Choice) => {
+    if (resolved) return;
+    setPicked(c.id);
+    if (c.correct) {
+      store.addAttempt(explorerId, CH.id, { understanding: 'complete', source: 'connect.complete', correct: true, usedAnswerHint: attempts > 0 });
+      setResolved(true);
+      setFb({ good: true, text: c.feedback });
+    } else {
+      store.addAttempt(explorerId, CH.id, { understanding: 'complete', source: 'connect.complete', correct: false, usedAnswerHint: false });
+      setAttempts((n) => n + 1);
+      setFb({ good: false, text: c.feedback });
+    }
+  };
+
+  return (
+    <div className="card">
+      <div className="guide-name">CONNECT</div>
+      <img className="scene-banner" src="/assets/creation-day-7-v3.webp" alt="" />
+      <p className="q-prompt">{q.prompt}</p>
+      <div className="choice-grid">
+        {q.choices.map((c) => (
+          <button
+            key={c.id}
+            className={`choice ${resolved && c.correct ? 'correct' : picked === c.id && !c.correct ? 'wrong' : ''}`}
+            disabled={resolved}
+            onClick={() => choose(c)}
+          >
+            {c.text}
+          </button>
+        ))}
+      </div>
+      {fb && <div className={`feedback ${fb.good ? 'good' : 'try'}`}>{fb.text}</div>}
+      {resolved && (
+        <div className="step-actions">
+          <span />
+          <button className="pr-primary" onClick={onDone}>Next →</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
   const store = useStore();
   const a = CH.activity;
   const [pool] = useState(() => shuffle(a.cards));
@@ -386,7 +487,7 @@ function OrderCard({ explorerId, onDone, replaying }: { explorerId: string; onDo
           <div className="step-actions">
             <span />
             <button className="pr-primary" onClick={onDone}>
-              {replaying ? 'Back to the recap →' : 'On to writing →'}
+              Next →
             </button>
           </div>
         </>
