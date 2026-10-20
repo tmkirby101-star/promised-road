@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import InnerBar from '../InnerBar';
-import Story from './Story';
+import StoryBook from './StoryBook';
 import Explore from './Explore';
 import Write from './Write';
 import Complete from './Complete';
@@ -78,7 +78,7 @@ export default function ChapterFlow({
   let body: ReactNode = null;
   switch (step) {
     case 'story':
-      body = <Story explorerId={explorerId} onNext={() => afterSection('explore')} />;
+      body = <StoryBook explorerId={explorerId} onNext={() => afterSection('explore')} />;
       break;
     case 'explore':
       body = <Explore explorerId={explorerId} onNext={() => afterSection('write')} />;
@@ -102,11 +102,13 @@ export default function ChapterFlow({
     <div className="app-journey chapter-bg">
       <InnerBar explorerId={explorerId} onLeave={onLeave} onParent={onParent} />
       <div className="inner-wrap">
-        <div className="chap-head">
-          <span className="chap-kicker">GENESIS · CHAPTER 1</span>
-          <h2 className="chap-title">{CH.title}</h2>
-          <span className="chap-passage">{CH.passage}</span>
-        </div>
+        {step !== 'story' && (
+          <div className="chap-head">
+            <span className="chap-kicker">GENESIS · CHAPTER 1</span>
+            <h2 className="chap-title">{CH.title}</h2>
+            <span className="chap-passage">{CH.passage}</span>
+          </div>
+        )}
         <div className="progress-row" aria-hidden="true">
           {steps.map((s, i) => (
             <span key={s} className={i <= stepIndex ? 'on' : ''} />

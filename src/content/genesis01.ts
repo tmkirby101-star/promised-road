@@ -28,8 +28,8 @@ export const GENESIS_01 = {
   title: 'A World Made Good',
   passage: 'Genesis 1:1–2:3',
   bookTitle: 'Genesis',
-  // The guide reads and points to Scripture; never an eyewitness.
-  guide: { name: 'Ezra', role: 'Keeper of the Scroll' },
+  // The guide reads Scripture alongside the child; never an eyewitness to Creation.
+  guide: { name: 'Isaiah', role: 'Prophet' },
 
   intro:
     'Before anything you have ever seen — before the sun, before the sea, before a single bird — there was God. Let us read how it all began.',
