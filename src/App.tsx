@@ -15,8 +15,14 @@ export default function App() {
   const store = useStore();
   const [view, setView] = useState<View>('landing');
   const [explorerId, setExplorerId] = useState<string | null>(null);
+  const [parentOrigin, setParentOrigin] = useState<'journey' | 'chapter'>('journey');
   const [info, setInfo] = useState<InfoKind>(null);
   const [focusSignal, setFocusSignal] = useState(0);
+
+  const openParent = (from: 'journey' | 'chapter') => {
+    setParentOrigin(from);
+    setView('parent');
+  };
 
   // Large-text access support toggles a body class.
   const largeText = explorerId ? store.getAccess(explorerId).largeText : false;
@@ -41,7 +47,7 @@ export default function App() {
         explorerId={explorerId}
         onBegin={() => setView('chapter')}
         onLeave={() => setView('explorers')}
-        onParent={() => setView('parent')}
+        onParent={() => openParent('journey')}
       />
     );
   }
@@ -50,7 +56,7 @@ export default function App() {
       <ChapterFlow
         explorerId={explorerId}
         onLeave={() => setView('journey')}
-        onParent={() => setView('parent')}
+        onParent={() => openParent('chapter')}
       />
     );
   }
@@ -59,7 +65,7 @@ export default function App() {
       <ParentView
         explorerId={explorerId}
         onLeave={() => setView('landing')}
-        onBack={() => setView('journey')}
+        onBack={() => setView(parentOrigin)}
       />
     );
   }

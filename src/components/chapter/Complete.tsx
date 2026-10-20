@@ -1,6 +1,6 @@
 import { GENESIS_01 } from '../../content/genesis01';
 import { useStore } from '../../lib/store';
-import { UNDERSTANDINGS, understandingState, discoveries, STATE_LABEL } from '../../lib/record';
+import { discoveries } from '../../lib/record';
 
 const CH = GENESIS_01;
 
@@ -17,31 +17,41 @@ export default function Complete({
   const rec = store.getChapter(explorerId, CH.id);
   const found = discoveries(rec);
 
+  const recap = [
+    { icon: '📖', text: 'You read the story of creation' },
+    { icon: '✨', text: 'You practiced the memory verse' },
+    { icon: '🔢', text: 'You put creation in order' },
+    { icon: '✍️', text: 'You wrote about something God made' },
+    { icon: '🪴', text: 'You cared for part of God’s world' },
+  ];
+
   return (
     <div className="card complete-card">
       <div className="complete-mark">📜✨</div>
-      <h3 className="complete-title">Chapter complete!</h3>
-      <p className="retelling" style={{ fontSize: 16 }}>
-        You finished <strong>{CH.title}</strong> — the story, the memory verse, your writing, and
-        caring for God's world.
+      <h3 className="complete-title">Well done!</h3>
+      <p className="retelling" style={{ fontSize: 17 }}>
+        You finished <strong>{CH.title}</strong>.
       </p>
 
       <div className="discoveries">
-        {UNDERSTANDINGS.map((u) => {
-          const s = understandingState(rec, u.key);
-          return (
-            <div className="disc-row" key={u.key}>
-              <span className={`disc-dot ${s}`} />
-              <span>{u.child}</span>
-              <span className="st">{STATE_LABEL[s]}</span>
-            </div>
-          );
-        })}
+        {recap.map((r) => (
+          <div className="disc-row" key={r.text}>
+            <span style={{ fontSize: 22 }}>{r.icon}</span>
+            <span>{r.text}</span>
+            <span className="st" style={{ color: '#2f7d6b', fontWeight: 700 }}>
+              ✓
+            </span>
+          </div>
+        ))}
       </div>
 
+      <p className="retelling" style={{ fontSize: 17 }}>
+        You made <strong>{found}</strong> {found === 1 ? 'discovery' : 'discoveries'} about God and
+        His good world. 🌿
+      </p>
       <p className="chap-passage">
-        {found} of 4 discoveries made · Chapter marker earned. The <strong>Genesis stamp</strong> comes
-        after the whole book and its review.
+        You earned your Chapter 1 marker. The <strong>Genesis stamp</strong> is waiting for you at the
+        end of the whole book!
       </p>
 
       <div className="step-actions" style={{ justifyContent: 'center', gap: 12 }}>

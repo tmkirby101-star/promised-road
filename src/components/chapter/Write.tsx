@@ -6,19 +6,34 @@ import type { Choice } from '../../content/genesis01';
 const CH = GENESIS_01;
 
 export default function Write({ explorerId, onNext }: { explorerId: string; onNext: () => void }) {
-  const [sub, setSub] = useState<'compose' | 'apply'>('compose');
-  if (sub === 'compose') return <Compose explorerId={explorerId} onDone={() => setSub('apply')} />;
+  const store = useStore();
+  const [sub, setSubState] = useState<'compose' | 'apply'>(
+    () => store.getChapter(explorerId, CH.id).cursor.writeSub,
+  );
+  const go = (s: 'compose' | 'apply') => {
+    store.setCursor(explorerId, CH.id, { writeSub: s });
+    setSubState(s);
+  };
+  if (sub === 'compose') return <Compose explorerId={explorerId} onDone={() => go('apply')} />;
   return <Apply explorerId={explorerId} onDone={onNext} />;
 }
 
 function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
   const store = useStore();
   const w = CH.writing;
-  const [subjectId, setSubjectId] = useState<string | null>(null);
-  const [text, setText] = useState('');
-  const [named, setNamed] = useState<'yes' | 'help' | null>(null);
-  const [noticed, setNoticed] = useState<'yes' | 'help' | null>(null);
-  const [gratitude, setGratitude] = useState('');
+  const d0 = store.getChapter(explorerId, CH.id).draft;
+  const [subjectId, setSubjectIdState] = useState<string | null>(d0.subjectId);
+  const [text, setTextState] = useState(d0.text);
+  const [named, setNamedState] = useState<'yes' | 'help' | null>(d0.named);
+  const [noticed, setNoticedState] = useState<'yes' | 'help' | null>(d0.noticed);
+  const [gratitude, setGratitudeState] = useState(d0.gratitude);
+
+  // Mirror every edit into the saved draft so leaving never loses it.
+  const setSubjectId = (v: string | null) => { setSubjectIdState(v); store.setDraft(explorerId, CH.id, { subjectId: v }); };
+  const setText = (v: string) => { setTextState(v); store.setDraft(explorerId, CH.id, { text: v }); };
+  const setNamed = (v: 'yes' | 'help') => { setNamedState(v); store.setDraft(explorerId, CH.id, { named: v }); };
+  const setNoticed = (v: 'yes' | 'help') => { setNoticedState(v); store.setDraft(explorerId, CH.id, { noticed: v }); };
+  const setGratitude = (v: string) => { setGratitudeState(v); store.setDraft(explorerId, CH.id, { gratitude: v }); };
 
   const subject = w.subjects.find((s) => s.id === subjectId) ?? null;
   const canSave = !!subject && text.trim().length > 0;

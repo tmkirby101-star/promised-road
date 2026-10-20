@@ -50,6 +50,30 @@ export interface AccessSupports {
   largeText: boolean;
 }
 
+// Exact position in the flow, saved so a child resumes where they left off.
+export type FlowStep = 'story' | 'explore' | 'write' | 'complete';
+export type ExploreSub = 'q0' | 'q1' | 'memory' | 'order';
+export type WriteSub = 'compose' | 'apply';
+
+export interface Cursor {
+  step: FlowStep;
+  storyPage: number;
+  exploreSub: ExploreSub;
+  writeSub: WriteSub;
+}
+
+// Unfinished writing, autosaved so a draft is never lost on leave.
+export interface Draft {
+  subjectId: string | null;
+  text: string;
+  named: 'yes' | 'help' | null;
+  noticed: 'yes' | 'help' | null;
+  gratitude: string;
+}
+
+export const defaultCursor: Cursor = { step: 'story', storyPage: 0, exploreSub: 'q0', writeSub: 'compose' };
+export const defaultDraft: Draft = { subjectId: null, text: '', named: null, noticed: null, gratitude: '' };
+
 export interface ChapterRecord {
   explorerId: string;
   chapterId: string;
@@ -57,6 +81,8 @@ export interface ChapterRecord {
   participation: Participation;
   writing: Writing | null;
   completedAt: number | null;
+  cursor: Cursor;
+  draft: Draft;
 }
 
 export function emptyChapter(explorerId: string, chapterId: string): ChapterRecord {
@@ -72,6 +98,8 @@ export function emptyChapter(explorerId: string, chapterId: string): ChapterReco
     },
     writing: null,
     completedAt: null,
+    cursor: { ...defaultCursor },
+    draft: { ...defaultDraft },
   };
 }
 

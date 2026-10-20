@@ -3,6 +3,7 @@ import { GENESIS_01 } from '../../content/genesis01';
 import { useStore } from '../../lib/store';
 import { speak } from '../../lib/speak';
 import type { Choice } from '../../content/genesis01';
+import type { ExploreSub } from '../../lib/record';
 
 const CH = GENESIS_01;
 
@@ -15,12 +16,15 @@ function shuffle<T>(a: T[]): T[] {
   return r;
 }
 
-type Sub = 'q0' | 'q1' | 'memory' | 'order';
-
 export default function Explore({ explorerId, onNext }: { explorerId: string; onNext: () => void }) {
   const store = useStore();
   const narration = store.getAccess(explorerId).narration;
-  const [sub, setSub] = useState<Sub>('q0');
+  const [sub, setSubState] = useState<ExploreSub>(() => store.getChapter(explorerId, CH.id).cursor.exploreSub);
+
+  const go = (s: ExploreSub) => {
+    store.setCursor(explorerId, CH.id, { exploreSub: s });
+    setSubState(s);
+  };
 
   const promptText = useMemo(() => {
     if (sub === 'q0') return CH.questions[0].prompt;
@@ -34,13 +38,14 @@ export default function Explore({ explorerId, onNext }: { explorerId: string; on
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sub, narration]);
 
+  // Distinct keys so each question mounts with fresh state (no carryover).
   if (sub === 'q0')
-    return <QuestionCard q={CH.questions[0]} explorerId={explorerId} onDone={() => setSub('q1')} />;
+    return <QuestionCard key="q0" q={CH.questions[0]} explorerId={explorerId} onDone={() => go('q1')} />;
   if (sub === 'q1')
-    return <QuestionCard q={CH.questions[1]} explorerId={explorerId} onDone={() => setSub('memory')} />;
+    return <QuestionCard key="q1" q={CH.questions[1]} explorerId={explorerId} onDone={() => go('memory')} />;
   if (sub === 'memory')
-    return <MemoryCard explorerId={explorerId} onDone={() => setSub('order')} />;
-  return <OrderCard explorerId={explorerId} onDone={onNext} />;
+    return <MemoryCard key="memory" explorerId={explorerId} onDone={() => go('order')} />;
+  return <OrderCard key="order" explorerId={explorerId} onDone={onNext} />;
 }
 
 function QuestionCard({
@@ -166,6 +171,8 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
   const [pool] = useState(() => shuffle(a.cards));
   const [placed, setPlaced] = useState<string[]>([]);
   const [wrongCount, setWrongCount] = useState(0);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [shakeId, setShakeId] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const complete = placed.length === a.correctOrder.length;
@@ -178,11 +185,12 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
       setPlaced(next);
       setMsg(null);
       if (next.length === a.correctOrder.length) {
+        // Help is opt-in; opening it (or any wrong try) counts as answer support.
         store.addAttempt(explorerId, CH.id, {
           understanding: 'order',
           source: 'activity.order',
           correct: true,
-          usedAnswerHint: wrongCount > 0,
+          usedAnswerHint: wrongCount > 0 || hintUsed,
         });
       }
     } else {
@@ -195,7 +203,6 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
       setWrongCount((n) => n + 1);
       setShakeId(id);
       setTimeout(() => setShakeId(null), 320);
-      // specific feedback: trying the sun/moon/stars before light
       setMsg(id === 'lights' && expected === 'light' ? a.feedback.lightsEarly : a.feedback.generic);
     }
   };
@@ -241,7 +248,23 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
       )}
 
       {msg && !complete && <div className="feedback try" style={{ marginTop: 16 }}>{msg}</div>}
-      {!complete && (
+
+      {/* Help is optional and recorded, so it never masquerades as independent success. */}
+      {!complete && !showHint && (
+        <div className="step-actions">
+          <span />
+          <button
+            className="pr-secondary"
+            onClick={() => {
+              setShowHint(true);
+              setHintUsed(true);
+            }}
+          >
+            Need a hint?
+          </button>
+        </div>
+      )}
+      {!complete && showHint && (
         <div className="feedback" style={{ marginTop: 14, background: '#f3efe2', color: '#6a5a38' }}>
           💡 {a.help}
         </div>

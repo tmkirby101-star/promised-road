@@ -3,9 +3,13 @@ import {
   type AccessSupports,
   type Attempt,
   type ChapterRecord,
+  type Cursor,
+  type Draft,
   type Participation,
   type Writing,
   defaultAccess,
+  defaultCursor,
+  defaultDraft,
   emptyChapter,
   isComplete,
 } from './record';
@@ -44,8 +48,19 @@ interface StoreApi {
   setParticipation: (explorerId: string, chapterId: string, patch: Partial<Participation>) => void;
   saveWriting: (explorerId: string, chapterId: string, writing: Writing) => void;
   setAccess: (explorerId: string, patch: Partial<AccessSupports>) => void;
+  setCursor: (explorerId: string, chapterId: string, patch: Partial<Cursor>) => void;
+  setDraft: (explorerId: string, chapterId: string, patch: Partial<Draft>) => void;
   resetChapter: (explorerId: string, chapterId: string) => void;
   version: number; // bumps on every change so consumers re-render
+}
+
+// Older persisted records may predate cursor/draft — fill them in.
+function normalize(rec: ChapterRecord): ChapterRecord {
+  return {
+    ...rec,
+    cursor: rec.cursor ?? { ...defaultCursor },
+    draft: rec.draft ?? { ...defaultDraft },
+  };
 }
 
 const Ctx = createContext<StoreApi | null>(null);
@@ -66,7 +81,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getChapter = useCallback((explorerId: string, chapterId: string): ChapterRecord => {
-    return ref.current.chapters[key(explorerId, chapterId)] ?? emptyChapter(explorerId, chapterId);
+    const r = ref.current.chapters[key(explorerId, chapterId)];
+    return r ? normalize(r) : emptyChapter(explorerId, chapterId);
   }, []);
 
   const getAccess = useCallback((explorerId: string): AccessSupports => {
@@ -76,7 +92,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const ensure = (s: StoreShape, explorerId: string, chapterId: string): ChapterRecord => {
     const k = key(explorerId, chapterId);
     if (!s.chapters[k]) s.chapters[k] = emptyChapter(explorerId, chapterId);
-    else s.chapters[k] = { ...s.chapters[k], attempts: [...s.chapters[k].attempts] };
+    else s.chapters[k] = normalize({ ...s.chapters[k], attempts: [...s.chapters[k].attempts] });
     return s.chapters[k];
   };
 
@@ -123,6 +139,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [commit],
   );
 
+  const setCursor: StoreApi['setCursor'] = useCallback(
+    (explorerId, chapterId, patch) =>
+      commit((s) => {
+        const rec = ensure(s, explorerId, chapterId);
+        rec.cursor = { ...rec.cursor, ...patch };
+      }),
+    [commit],
+  );
+
+  const setDraft: StoreApi['setDraft'] = useCallback(
+    (explorerId, chapterId, patch) =>
+      commit((s) => {
+        const rec = ensure(s, explorerId, chapterId);
+        rec.draft = { ...rec.draft, ...patch };
+      }),
+    [commit],
+  );
+
   const resetChapter: StoreApi['resetChapter'] = useCallback(
     (explorerId, chapterId) =>
       commit((s) => {
@@ -139,10 +173,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setParticipation,
       saveWriting,
       setAccess,
+      setCursor,
+      setDraft,
       resetChapter,
       version,
     }),
-    [getChapter, getAccess, addAttempt, setParticipation, saveWriting, setAccess, resetChapter, version],
+    [getChapter, getAccess, addAttempt, setParticipation, saveWriting, setAccess, setCursor, setDraft, resetChapter, version],
   );
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;

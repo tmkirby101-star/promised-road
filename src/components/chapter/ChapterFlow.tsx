@@ -25,6 +25,8 @@ function resumeStep(rec: ChapterRecord): Step {
   return 'complete';
 }
 
+const STEPS: Step[] = ['story', 'explore', 'write', 'complete'];
+
 export default function ChapterFlow({
   explorerId,
   onLeave,
@@ -36,22 +38,33 @@ export default function ChapterFlow({
 }) {
   const store = useStore();
   const rec0 = store.getChapter(explorerId, CH.id);
-  const [step, setStep] = useState<Step>(() => resumeStep(rec0));
+  // Start at the later of the saved cursor and what progress implies.
+  const [step, setStep] = useState<Step>(() => {
+    const byCursor = STEPS.indexOf(rec0.cursor.step);
+    const byProgress = STEPS.indexOf(resumeStep(rec0));
+    return STEPS[Math.max(byCursor, byProgress)];
+  });
 
-  const steps: Step[] = ['story', 'explore', 'write', 'complete'];
+  const go = (s: Step) => {
+    store.setCursor(explorerId, CH.id, { step: s });
+    setStep(s);
+  };
+
+  const steps = STEPS;
   const stepIndex = steps.indexOf(step);
 
   const body = useMemo(() => {
     switch (step) {
       case 'story':
-        return <Story explorerId={explorerId} onNext={() => setStep('explore')} />;
+        return <Story explorerId={explorerId} onNext={() => go('explore')} />;
       case 'explore':
-        return <Explore explorerId={explorerId} onNext={() => setStep('write')} />;
+        return <Explore explorerId={explorerId} onNext={() => go('write')} />;
       case 'write':
-        return <Write explorerId={explorerId} onNext={() => setStep('complete')} />;
+        return <Write explorerId={explorerId} onNext={() => go('complete')} />;
       case 'complete':
         return <Complete explorerId={explorerId} onLeave={onLeave} onParent={onParent} />;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, explorerId, onLeave, onParent]);
 
   return (

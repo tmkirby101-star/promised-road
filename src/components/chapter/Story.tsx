@@ -7,7 +7,14 @@ const CH = GENESIS_01;
 
 export default function Story({ explorerId, onNext }: { explorerId: string; onNext: () => void }) {
   const store = useStore();
-  const [page, setPage] = useState(0);
+  const [page, setPageState] = useState(() => store.getChapter(explorerId, CH.id).cursor.storyPage || 0);
+  const setPage = (n: number | ((p: number) => number)) => {
+    setPageState((prev) => {
+      const next = typeof n === 'function' ? n(prev) : n;
+      store.setCursor(explorerId, CH.id, { storyPage: next });
+      return next;
+    });
+  };
   const narration = store.getAccess(explorerId).narration;
   const total = CH.story.length;
   const p = CH.story[page];
