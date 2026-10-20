@@ -43,17 +43,21 @@ export default function ChapterFlow({
 }) {
   const store = useStore();
   const rec0 = store.getChapter(explorerId, CH.id);
-  // Start at the later of the saved cursor and what progress implies.
+  // Replaying a single section from the completion screen: do it, then return to
+  // the recap (not forward through the rest). Achievements are preserved because
+  // completedAt is never cleared and understanding states are sticky-best. The
+  // replay flag is persisted, so a reload mid-replay resumes the replay section
+  // rather than snapping to the completion recap.
+  const [replaying, setReplaying] = useState(() => !!rec0.cursor.replaying);
+
+  // Start at the later of the saved cursor and what progress implies — unless a
+  // replay is in progress, in which case resume that section.
   const [step, setStep] = useState<Step>(() => {
+    if (rec0.cursor.replaying) return rec0.cursor.step;
     const byCursor = STEPS.indexOf(rec0.cursor.step);
     const byProgress = STEPS.indexOf(resumeStep(rec0));
     return STEPS[Math.max(byCursor, byProgress)];
   });
-
-  // Replaying a single section from the completion screen: do it, then return to
-  // the recap (not forward through the rest). Achievements are preserved because
-  // completedAt is never cleared and understanding states are sticky-best.
-  const [replaying, setReplaying] = useState(false);
 
   const go = (s: Step) => {
     store.setCursor(explorerId, CH.id, { step: s });
@@ -63,6 +67,7 @@ export default function ChapterFlow({
   const afterSection = (normalNext: Step) => {
     if (replaying) {
       setReplaying(false);
+      store.setCursor(explorerId, CH.id, { replaying: false });
       go('complete');
     } else {
       go(normalNext);
@@ -73,6 +78,7 @@ export default function ChapterFlow({
     if (section === 'story') store.setCursor(explorerId, CH.id, { storyPage: 0 });
     if (section === 'explore') store.setCursor(explorerId, CH.id, { exploreSub: 'order' });
     if (section === 'write') store.setCursor(explorerId, CH.id, { writeSub: 'compose' });
+    store.setCursor(explorerId, CH.id, { replaying: true });
     setReplaying(true);
     go(section);
   };

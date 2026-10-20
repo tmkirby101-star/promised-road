@@ -45,7 +45,10 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
     return () => mq.removeEventListener('change', on);
   }, []);
 
-  const single = access.largeText || narrow;
+  // Keep the two-page spread wherever it fits — the book IS the open page. Bigger
+  // text enlarges within the spread (the text page scrolls if needed); only a
+  // genuinely narrow viewport collapses to one face at a time.
+  const single = narrow;
   const spreadIndex = Math.floor(face / 2);
   const sp = SPREADS[spreadIndex];
   const atLast = single ? face + 1 >= TOTAL_FACES : spreadIndex + 1 >= SPREADS.length;

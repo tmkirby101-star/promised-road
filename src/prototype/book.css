@@ -157,13 +157,15 @@
 .bk-embed .bk-stage{ flex:none; padding:0 6px 2px; }
 /* A slightly taller page (16/11.3) gives the longer days more room for text; the
    story step also breaks out of the narrow activity column (see .story-wrap). */
-.bk-embed .bk-book{ aspect-ratio:16 / 11.3; width:min(1200px, 97vw, calc((100svh - 128px) * 1.416)); max-height:calc(100svh - 128px); }
+/* Reserve ~182px of chrome (top bar + progress + the nav row beneath) so the
+   page-turn controls are always on-screen, even on the first page. */
+.bk-embed .bk-book{ aspect-ratio:16 / 11.3; width:min(1200px, 97vw, calc((100svh - 182px) * 1.416)); max-height:calc(100svh - 182px); }
 .bk-embed .bk-page.right{ padding:20px 30px; }
 .bk-embed .bk-story-title{ margin:0 0 12px; }
 .bk-embed .bk-narr{ margin:0 0 10px; }
 .bk-embed .bk-scrip{ margin-top:14px; }
 .bk-embed .bk-readaloud{ margin:8px 0 2px; }
-.bk-embed.single .bk-book{ width:min(760px, 96vw); max-height:calc(100svh - 148px); }
-.bk-embed.single .bk-illus{ height:calc(100svh - 228px); }
+.bk-embed.single .bk-book{ width:min(760px, 96vw); max-height:calc(100svh - 182px); }
+.bk-embed.single .bk-illus{ height:calc(100svh - 262px); }
 .bk-embed .bk-nav{ margin:8px auto 6px; }
 .bk-embed .bk-act{ margin:0 auto; }

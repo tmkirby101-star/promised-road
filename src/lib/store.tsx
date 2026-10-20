@@ -60,7 +60,7 @@ interface StoreApi {
 function normalize(rec: ChapterRecord): ChapterRecord {
   return {
     ...rec,
-    cursor: rec.cursor ?? { ...defaultCursor },
+    cursor: { ...defaultCursor, ...(rec.cursor ?? {}) },
     draft: rec.draft ?? { ...defaultDraft },
   };
 }

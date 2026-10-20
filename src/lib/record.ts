@@ -74,6 +74,7 @@ export interface Cursor {
   storyPage: number;
   exploreSub: ExploreSub;
   writeSub: WriteSub;
+  replaying?: boolean; // true while replaying a section after completion — survives reload
 }
 
 // Unfinished writing, autosaved so a draft is never lost on leave.
@@ -85,7 +86,7 @@ export interface Draft {
   gratitude: string;
 }
 
-export const defaultCursor: Cursor = { step: 'story', storyPage: 0, exploreSub: 'order', writeSub: 'compose' };
+export const defaultCursor: Cursor = { step: 'story', storyPage: 0, exploreSub: 'order', writeSub: 'compose', replaying: false };
 export const defaultDraft: Draft = { subjectId: null, text: '', named: null, noticed: null, gratitude: '' };
 
 export interface ChapterRecord {
