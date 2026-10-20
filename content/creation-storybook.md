@@ -11,3 +11,6 @@ Seven illustrated spreads at #book, from first light to seventh-day rest. This i
 
 ## Limits
 Browser speech synthesis remains a device-dependent access support. Natural recorded narration, word highlighting, guide portraits, production auth, AI, and cloud persistence are separate tasks. This preview is not the completed curriculum or a complete Genesis book.
+
+## Subject and paint direction
+Each day has its own visual subject and composition. Day Three is a close botanical grove, Day Four contains only sun/moon/stars in the heavens, Day Six brings people and land animals into focus with broad traditional brushwork, and Day Seven shows the people and animals resting in a sheltered woodland clearing. The earlier coastal vista repetition and proposed globe for Day Seven are superseded. Scripture and narration remain unchanged; the rest scene is illustration, not a claim that Genesis narrates Adam and Eve's exact posture.

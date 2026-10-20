@@ -39,8 +39,8 @@ export const SPREADS: Spread[] = [
     "key": "day3",
     "day": "Day Three",
     "title": "A world growing green",
-    "img": "/assets/creation-day-3.webp",
-    "alt": "Fruit trees and lush green plants grow on land beside the sea.",
+    "img": "/assets/creation-day-3-v2.webp",
+    "alt": "A close view of new soil, unfurling plants, and fruit-bearing trees in a flourishing grove.",
     "narration": [
       "God gathered the waters, and dry land appeared. He called the dry land Earth and the gathered waters Seas. God saw that it was good.",
       "Then the land grew green with grass, seed-bearing plants, and trees bearing fruit. God saw that it was good. There was evening and morning—the third day."
@@ -54,8 +54,8 @@ export const SPREADS: Spread[] = [
     "key": "day4",
     "day": "Day Four",
     "title": "Lights for day and night",
-    "img": "/assets/creation-day-4.webp",
-    "alt": "Sunlight falls across the coast as the moon and stars shine in a poetic transition from day to night.",
+    "img": "/assets/creation-day-4-v2.webp",
+    "alt": "A brilliant golden sun, a silver crescent moon, and stars fill the deep blue heavens.",
     "narration": [
       "God made lights in the sky: the sun to rule the day, the moon to rule the night, and the stars.",
       "These lights marked the seasons, days, and years. God set them in the sky to give light to the earth. God saw that it was good. There was evening and morning—the fourth day."
@@ -84,8 +84,8 @@ export const SPREADS: Spread[] = [
     "key": "day6",
     "day": "Day Six",
     "title": "Animals—and people",
-    "img": "/assets/creation-day-6.webp",
-    "alt": "Land animals fill a flourishing garden; a man and woman are seen from behind, modestly screened by foliage.",
+    "img": "/assets/creation-day-6-v3.webp",
+    "alt": "A softly painted scene of the first man and woman among land animals in the garden.",
     "narration": [
       "God made the land animals: creatures that walked, leaped, and crept along the ground. Then God made people—male and female—in His own image.",
       "God blessed them and gave them responsibility to rule and care for His world. He looked at everything He had made. It was very good. There was evening and morning—the sixth day."
@@ -103,8 +103,8 @@ export const SPREADS: Spread[] = [
     "key": "day7",
     "day": "Day Seven",
     "title": "The work was complete",
-    "img": "/assets/creation-day-7.webp",
-    "alt": "A peaceful, completed world with a river, flourishing trees, and resting animals.",
+    "img": "/assets/creation-day-7-v3.webp",
+    "alt": "The first man and woman sit quietly in a woodland clearing while animals rest nearby.",
     "narration": [
       "The heavens and the earth were finished, with all their life and beauty. On the seventh day, God rested from His work.",
       "God was not tired. His work of creation was complete. He blessed the seventh day and made it holy—a day set apart. His good world was finished."
