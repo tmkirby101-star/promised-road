@@ -6,7 +6,7 @@ import type { Choice } from '../../content/genesis01';
 
 const CH = GENESIS_01;
 
-export default function Write({ explorerId, onNext }: { explorerId: string; onNext: () => void }) {
+export default function Write({ explorerId, onNext, replaying }: { explorerId: string; onNext: () => void; replaying?: boolean }) {
   const store = useStore();
   const [sub, setSubState] = useState<'compose' | 'apply'>(
     () => store.getChapter(explorerId, CH.id).cursor.writeSub,
@@ -16,7 +16,7 @@ export default function Write({ explorerId, onNext }: { explorerId: string; onNe
     setSubState(s);
   };
   if (sub === 'compose') return <Compose explorerId={explorerId} onDone={() => go('apply')} />;
-  return <Apply explorerId={explorerId} onDone={onNext} />;
+  return <Apply explorerId={explorerId} onDone={onNext} replaying={replaying} />;
 }
 
 function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
@@ -56,7 +56,7 @@ function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => voi
     onDone();
   };
 
-  const Pinned = () =>
+  const renderPinned = () =>
     subject ? (
       <div className="pinned" style={{ marginBottom: 16 }}>
         <img src={subject.img} alt={subject.label} />
@@ -105,7 +105,7 @@ function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => voi
 
       {micro === 'write' && subject && (
         <>
-          <Pinned />
+          {renderPinned()}
           <p className="q-prompt" style={{ fontSize: 20 }}>Tell one thing you notice about {subject.label}.</p>
           <div className="feedback" style={{ background: '#f3efe2', color: '#6a5a38', marginTop: 0 }}>
             For example: “{w.example}”
@@ -223,7 +223,7 @@ function CareIcon({ id }: { id: string }) {
   );
 }
 
-function Apply({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
+function Apply({ explorerId, onDone, replaying }: { explorerId: string; onDone: () => void; replaying?: boolean }) {
   const store = useStore();
   const ap = CH.application;
   const [attempts, setAttempts] = useState(0);
@@ -279,7 +279,7 @@ function Apply({ explorerId, onDone }: { explorerId: string; onDone: () => void 
         <div className="step-actions">
           <span />
           <button className="pr-primary" onClick={onDone}>
-            Finish the chapter →
+            {replaying ? 'Back to the recap →' : 'Finish the chapter →'}
           </button>
         </div>
       )}

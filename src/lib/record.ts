@@ -58,6 +58,10 @@ export interface Writing {
 export interface AccessSupports {
   narration: boolean;
   largeText: boolean;
+  // "Ever used this chapter" — stays true even after a support is switched off, so
+  // the parent view reflects what actually helped, not just the current toggle.
+  everNarration: boolean;
+  everLargeText: boolean;
 }
 
 // Exact position in the flow, saved so a child resumes where they left off.
@@ -113,7 +117,7 @@ export function emptyChapter(explorerId: string, chapterId: string): ChapterReco
   };
 }
 
-export const defaultAccess: AccessSupports = { narration: false, largeText: false };
+export const defaultAccess: AccessSupports = { narration: false, largeText: false, everNarration: false, everLargeText: false };
 
 // --- Derivations -----------------------------------------------------------
 

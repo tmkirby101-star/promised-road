@@ -33,11 +33,12 @@ function load(): StoreShape {
   return { chapters: {}, access: {} };
 }
 
-function persist(s: StoreShape) {
+function persist(s: StoreShape): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    return true;
   } catch {
-    /* ignore; in-memory still works for this session */
+    return false; // private mode / quota / blocked storage — the caller surfaces this
   }
 }
 
@@ -52,6 +53,7 @@ interface StoreApi {
   setDraft: (explorerId: string, chapterId: string, patch: Partial<Draft>) => void;
   resetChapter: (explorerId: string, chapterId: string) => void;
   version: number; // bumps on every change so consumers re-render
+  storageOk: boolean; // false once a save to localStorage has failed this session
 }
 
 // Older persisted records may predate cursor/draft — fill them in.
@@ -68,6 +70,7 @@ const Ctx = createContext<StoreApi | null>(null);
 export function StoreProvider({ children }: { children: ReactNode }) {
   const ref = useRef<StoreShape>(load());
   const [version, setVersion] = useState(0);
+  const [storageOk, setStorageOk] = useState(true);
 
   const commit = useCallback((mutate: (s: StoreShape) => void) => {
     const next: StoreShape = {
@@ -76,8 +79,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
     mutate(next);
     ref.current = next;
-    persist(next);
+    const ok = persist(next);
     setVersion((v) => v + 1);
+    if (!ok) setStorageOk(false);
   }, []);
 
   const getChapter = useCallback((explorerId: string, chapterId: string): ChapterRecord => {
@@ -86,7 +90,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getAccess = useCallback((explorerId: string): AccessSupports => {
-    return ref.current.access[explorerId] ?? defaultAccess;
+    const a = ref.current.access[explorerId];
+    return a ? { ...defaultAccess, ...a } : defaultAccess;
   }, []);
 
   const ensure = (s: StoreShape, explorerId: string, chapterId: string): ChapterRecord => {
@@ -134,7 +139,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const setAccess: StoreApi['setAccess'] = useCallback(
     (explorerId, patch) =>
       commit((s) => {
-        s.access[explorerId] = { ...(s.access[explorerId] ?? defaultAccess), ...patch };
+        const next = { ...defaultAccess, ...(s.access[explorerId] ?? {}), ...patch };
+        if (patch.narration) next.everNarration = true; // sticky: records that it helped
+        if (patch.largeText) next.everLargeText = true;
+        s.access[explorerId] = next;
       }),
     [commit],
   );
@@ -177,8 +185,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setDraft,
       resetChapter,
       version,
+      storageOk,
     }),
-    [getChapter, getAccess, addAttempt, setParticipation, saveWriting, setAccess, setCursor, setDraft, resetChapter, version],
+    [getChapter, getAccess, addAttempt, setParticipation, saveWriting, setAccess, setCursor, setDraft, resetChapter, version, storageOk],
   );
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;

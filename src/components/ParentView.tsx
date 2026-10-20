@@ -132,11 +132,11 @@ export default function ParentView({
             <strong style={{ fontSize: 13 }}>Access supports</strong>{' '}
             <span className="parent-sub">(never affect independence)</span>
             <div style={{ marginTop: 6 }}>
-              <span className={`pill ${access.narration ? 'on' : ''}`}>
-                {access.narration ? '✓' : '○'} Read aloud
+              <span className={`pill ${access.everNarration ? 'on' : ''}`}>
+                {access.everNarration ? '✓' : '○'} Read aloud
               </span>
-              <span className={`pill ${access.largeText ? 'on' : ''}`}>
-                {access.largeText ? '✓' : '○'} Bigger text
+              <span className={`pill ${access.everLargeText ? 'on' : ''}`}>
+                {access.everLargeText ? '✓' : '○'} Bigger text
               </span>
             </div>
           </div>

@@ -16,7 +16,7 @@ function shuffle<T>(a: T[]): T[] {
   return r;
 }
 
-export default function Explore({ explorerId, onNext }: { explorerId: string; onNext: () => void }) {
+export default function Explore({ explorerId, onNext, replaying }: { explorerId: string; onNext: () => void; replaying?: boolean }) {
   const store = useStore();
   const narration = store.getAccess(explorerId).narration;
   const [sub, setSubState] = useState<ExploreSub>(() => store.getChapter(explorerId, CH.id).cursor.exploreSub);
@@ -52,7 +52,7 @@ export default function Explore({ explorerId, onNext }: { explorerId: string; on
     return <QuestionCard key="q3" q={CH.questions[3]} n={4} total={total} explorerId={explorerId} onDone={() => go('memory')} />;
   if (sub === 'memory')
     return <MemoryCard key="memory" explorerId={explorerId} onDone={() => go('order')} />;
-  return <OrderCard key="order" explorerId={explorerId} onDone={onNext} />;
+  return <OrderCard key="order" explorerId={explorerId} replaying={replaying} onDone={onNext} />;
 }
 
 function QuestionCard({
@@ -132,8 +132,26 @@ function MemoryCard({ explorerId, onDone }: { explorerId: string; onDone: () => 
   const store = useStore();
   const m = CH.memory;
   const [opts] = useState(() => shuffle(m.options));
+  const [phase, setPhase] = useState<'teach' | 'practice'>('teach');
   const [done, setDone] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+
+  // Teach the whole verse first — read it together — then practice the missing word.
+  if (phase === 'teach') {
+    return (
+      <div className="card">
+        <div className="guide-name">REMEMBER · {m.ref}</div>
+        <p className="memory-verse">{m.full}</p>
+        <p className="retelling" style={{ fontSize: 16 }}>
+          Let us learn God’s word by heart. Read it through, then we’ll practice it together.
+        </p>
+        <div className="step-actions">
+          <button className="speak-btn" title="Read this aloud" onClick={() => speak(m.full)}>🔊</button>
+          <button className="pr-primary" onClick={() => setPhase('practice')}>Let’s practice it →</button>
+        </div>
+      </div>
+    );
+  }
 
   const pick = (word: string) => {
     if (done) return;
@@ -148,7 +166,8 @@ function MemoryCard({ explorerId, onDone }: { explorerId: string; onDone: () => 
 
   return (
     <div className="card">
-      <div className="guide-name">MEMORY VERSE · {m.ref}</div>
+      <div className="guide-name">REMEMBER · {m.ref}</div>
+      <p className="retelling" style={{ fontSize: 15, marginBottom: 4 }}>Which word fills the blank?</p>
       <p className="memory-verse">
         {m.before} <span className="memory-blank">{done ? m.answer : '______'}</span> {m.after}
       </p>
@@ -178,7 +197,7 @@ function MemoryCard({ explorerId, onDone }: { explorerId: string; onDone: () => 
   );
 }
 
-function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
+function OrderCard({ explorerId, onDone, replaying }: { explorerId: string; onDone: () => void; replaying?: boolean }) {
   const store = useStore();
   const a = CH.activity;
   const [pool] = useState(() => shuffle(a.cards));
@@ -367,7 +386,7 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
           <div className="step-actions">
             <span />
             <button className="pr-primary" onClick={onDone}>
-              On to writing →
+              {replaying ? 'Back to the recap →' : 'On to writing →'}
             </button>
           </div>
         </>

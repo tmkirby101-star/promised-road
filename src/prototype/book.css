@@ -149,12 +149,21 @@
  .bk-slot,.bk-card{width:125px;}.bk-act{padding:22px 16px;}
 }
 
-/* ---- Embedded as the chapter story section (not the full-screen #book preview) ---- */
+/* ---- Embedded as the chapter story section (not the full-screen #book preview) ----
+   Size the book from the available height (viewport minus the chapter chrome) so it
+   fills most of the screen and the reading page rarely needs to scroll. Text size is
+   kept; only the book grows. */
 .bk-embed{ min-height:0; background:transparent; }
-.bk-embed .bk-stage{ flex:none; padding:2px 6px 4px; }
-.bk-embed .bk-book{ max-height:67svh; }
-.bk-embed .bk-page.right{ padding:22px 30px; }
-.bk-embed.single .bk-book{ max-height:68svh; min-height:0; }
-.bk-embed.single .bk-illus{ height:50svh; }
-.bk-embed .bk-nav{ margin:10px auto 6px; }
+.bk-embed .bk-stage{ flex:none; padding:0 6px 2px; }
+/* A slightly taller page (16/11.3) gives the longer days more room for text; the
+   story step also breaks out of the narrow activity column (see .story-wrap). */
+.bk-embed .bk-book{ aspect-ratio:16 / 11.3; width:min(1200px, 97vw, calc((100svh - 128px) * 1.416)); max-height:calc(100svh - 128px); }
+.bk-embed .bk-page.right{ padding:20px 30px; }
+.bk-embed .bk-story-title{ margin:0 0 12px; }
+.bk-embed .bk-narr{ margin:0 0 10px; }
+.bk-embed .bk-scrip{ margin-top:14px; }
+.bk-embed .bk-readaloud{ margin:8px 0 2px; }
+.bk-embed.single .bk-book{ width:min(760px, 96vw); max-height:calc(100svh - 148px); }
+.bk-embed.single .bk-illus{ height:calc(100svh - 228px); }
+.bk-embed .bk-nav{ margin:8px auto 6px; }
 .bk-embed .bk-act{ margin:0 auto; }

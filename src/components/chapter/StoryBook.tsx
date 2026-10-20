@@ -16,7 +16,7 @@ const CHID = 'genesis-01';
 const GUIDE = 'Isaiah';
 const TOTAL_FACES = SPREADS.length * 2; // [img0, text0, …]
 
-export default function StoryBook({ explorerId, onNext }: { explorerId: string; onNext: () => void }) {
+export default function StoryBook({ explorerId, onNext, replaying }: { explorerId: string; onNext: () => void; replaying?: boolean }) {
   const store = useStore();
   const access = store.getAccess(explorerId);
   const narration = access.narration;
@@ -78,7 +78,7 @@ export default function StoryBook({ explorerId, onNext }: { explorerId: string; 
               </div>
             </div>
             <div className="bk-next">
-              <button onClick={onNext}>Let’s explore →</button>
+              <button onClick={onNext}>{replaying ? 'Back to the recap →' : 'Let’s explore →'}</button>
             </div>
           </div>
         </div>

@@ -11,13 +11,33 @@ import { useStore } from './lib/store';
 
 type View = 'landing' | 'explorers' | 'journey' | 'chapter' | 'parent';
 
+// Remember where the child was so a reload resumes instead of dropping to the landing.
+const NAV_KEY = 'promised-road:nav:v1';
+function loadNav(): { view: View; explorerId: string | null } {
+  try {
+    const d = JSON.parse(localStorage.getItem(NAV_KEY) || '{}');
+    if (d && typeof d.view === 'string') return { view: d.view as View, explorerId: d.explorerId ?? null };
+  } catch {
+    /* storage blocked — start at the landing */
+  }
+  return { view: 'landing', explorerId: null };
+}
+
 export default function App() {
   const store = useStore();
-  const [view, setView] = useState<View>('landing');
-  const [explorerId, setExplorerId] = useState<string | null>(null);
+  const [view, setView] = useState<View>(() => loadNav().view);
+  const [explorerId, setExplorerId] = useState<string | null>(() => loadNav().explorerId);
   const [parentOrigin, setParentOrigin] = useState<'journey' | 'chapter'>('journey');
   const [info, setInfo] = useState<InfoKind>(null);
   const [focusSignal, setFocusSignal] = useState(0);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(NAV_KEY, JSON.stringify({ view, explorerId }));
+    } catch {
+      /* storage blocked — resume won't persist, but the session still works */
+    }
+  }, [view, explorerId]);
 
   const openParent = (from: 'journey' | 'chapter') => {
     setParentOrigin(from);

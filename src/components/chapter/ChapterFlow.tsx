@@ -83,13 +83,13 @@ export default function ChapterFlow({
   let body: ReactNode = null;
   switch (step) {
     case 'story':
-      body = <StoryBook explorerId={explorerId} onNext={() => afterSection('explore')} />;
+      body = <StoryBook explorerId={explorerId} replaying={replaying} onNext={() => afterSection('explore')} />;
       break;
     case 'explore':
-      body = <Explore explorerId={explorerId} onNext={() => afterSection('write')} />;
+      body = <Explore explorerId={explorerId} replaying={replaying} onNext={() => afterSection('write')} />;
       break;
     case 'write':
-      body = <Write explorerId={explorerId} onNext={() => afterSection('complete')} />;
+      body = <Write explorerId={explorerId} replaying={replaying} onNext={() => afterSection('complete')} />;
       break;
     case 'complete':
       body = (
@@ -106,7 +106,7 @@ export default function ChapterFlow({
   return (
     <div className="app-journey chapter-bg">
       <InnerBar explorerId={explorerId} onLeave={onLeave} onParent={onParent} />
-      <div className="inner-wrap">
+      <div className={`inner-wrap${step === 'story' ? ' story-wrap' : ''}`}>
         {step !== 'story' && (
           <div className="chap-head">
             <span className="chap-kicker">GENESIS · CHAPTER 1</span>

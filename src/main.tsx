@@ -4,6 +4,7 @@ import './styles/preview.css';
 import './styles/app.css';
 import App from './App.tsx';
 import BookPrototype from './prototype/BookPrototype.tsx';
+import SaveBanner from './components/SaveBanner.tsx';
 import { StoreProvider } from './lib/store';
 
 // #book opens the isolated storybook prototype; everything else is the live app.
@@ -19,6 +20,7 @@ function Root() {
   return (
     <StoreProvider>
       <App />
+      <SaveBanner />
     </StoreProvider>
   );
 }
