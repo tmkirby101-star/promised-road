@@ -187,6 +187,42 @@ function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => voi
   );
 }
 
+// Consistent original line icons for the three care choices — no external art.
+function CareIcon({ id }: { id: string }) {
+  if (id === 'water')
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <g stroke="#173755" strokeWidth="2.4" fill="none" strokeLinecap="round">
+          <circle cx="16" cy="15" r="6" fill="#f3c969" />
+          <line x1="16" y1="4" x2="16" y2="6.5" />
+          <line x1="16" y1="23.5" x2="16" y2="26" />
+          <line x1="5" y1="15" x2="7.5" y2="15" />
+          <line x1="24.5" y1="15" x2="27" y2="15" />
+          <line x1="8" y1="7" x2="9.8" y2="8.8" />
+          <line x1="24" y1="7" x2="22.2" y2="8.8" />
+        </g>
+        <path d="M34 23 c-5 6 -7 9 -7 12 a7 7 0 0 0 14 0 c0 -3 -2 -6 -7 -12 z" fill="#8fc4f0" stroke="#173755" strokeWidth="2.2" />
+      </svg>
+    );
+  if (id === 'dark')
+    return (
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M31 7 a17 17 0 1 0 11 31 A13.5 13.5 0 0 1 31 7 z" fill="#2d4a6b" stroke="#173755" strokeWidth="2.2" strokeLinejoin="round" />
+        <circle cx="15" cy="13" r="1.7" fill="#b5893f" />
+        <circle cx="11" cy="22" r="1.2" fill="#b5893f" />
+      </svg>
+    );
+  // leaves — a leaf being pulled away from the stem
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <path d="M22 42 V22" stroke="#5a7d4a" strokeWidth="2.6" strokeLinecap="round" fill="none" />
+      <path d="M22 28 c-9 -1 -13 -7 -12 -14 c8 -1 13 5 12 14 z" fill="#8fbf6a" stroke="#173755" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M31 9 c7 -2 12 0 13 4 c-5 4 -11 3 -13 -4 z" fill="#c7b36a" stroke="#173755" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M27 17 l6 -5" stroke="#b5893f" strokeWidth="2" strokeLinecap="round" strokeDasharray="1 4" />
+    </svg>
+  );
+}
+
 function Apply({ explorerId, onDone }: { explorerId: string; onDone: () => void }) {
   const store = useStore();
   const ap = CH.application;
@@ -229,11 +265,12 @@ function Apply({ explorerId, onDone }: { explorerId: string; onDone: () => void 
         {ap.choices.map((c) => (
           <button
             key={c.id}
-            className={`choice ${resolved && c.correct ? 'correct' : picked === c.id && !c.correct ? 'wrong' : ''}`}
+            className={`choice care-choice ${resolved && c.correct ? 'correct' : picked === c.id && !c.correct ? 'wrong' : ''}`}
             disabled={resolved}
             onClick={() => choose(c)}
           >
-            {c.text}
+            <span className="care-ic"><CareIcon id={c.id} /></span>
+            <span>{c.text}</span>
           </button>
         ))}
       </div>

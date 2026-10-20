@@ -8,10 +8,12 @@ export default function Complete({
   explorerId,
   onLeave,
   onParent,
+  onReplay,
 }: {
   explorerId: string;
   onLeave: () => void;
   onParent: () => void;
+  onReplay: (section: 'story' | 'explore' | 'write') => void;
 }) {
   const store = useStore();
   const rec = store.getChapter(explorerId, CH.id);
@@ -22,7 +24,7 @@ export default function Complete({
     { icon: '✨', text: 'You practiced the memory verse' },
     { icon: '🔢', text: 'You put creation in order' },
     { icon: '✍️', text: 'You wrote about something God made' },
-    { icon: '🪴', text: 'You cared for part of God’s world' },
+    { icon: '🪴', text: 'You discovered how to care for a plant' },
   ];
 
   return (
@@ -49,10 +51,20 @@ export default function Complete({
         You made <strong>{found}</strong> {found === 1 ? 'discovery' : 'discoveries'} about God and
         His good world. 🌿
       </p>
-      <p className="chap-passage">
+      <p className="marker-note">
         You earned your Chapter 1 marker. The <strong>Genesis stamp</strong> is waiting for you at the
         end of the whole book!
       </p>
+
+      <div className="replay-box">
+        <div className="replay-label">Want to go through it again?</div>
+        <p className="replay-sub">Your discoveries and your marker are saved — practice as much as you like.</p>
+        <div className="replay-actions">
+          <button className="pr-secondary" onClick={() => onReplay('story')}>📖 Read the story again</button>
+          <button className="pr-secondary" onClick={() => onReplay('explore')}>🔢 Practice again</button>
+          <button className="pr-secondary" onClick={() => onReplay('write')}>✍️ Revisit my writing</button>
+        </div>
+      </div>
 
       <div className="step-actions" style={{ justifyContent: 'center', gap: 12 }}>
         <button className="pr-secondary" onClick={onParent}>

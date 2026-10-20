@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import InnerBar from '../InnerBar';
 import Story from './Story';
 import Explore from './Explore';
@@ -45,27 +45,58 @@ export default function ChapterFlow({
     return STEPS[Math.max(byCursor, byProgress)];
   });
 
+  // Replaying a single section from the completion screen: do it, then return to
+  // the recap (not forward through the rest). Achievements are preserved because
+  // completedAt is never cleared and understanding states are sticky-best.
+  const [replaying, setReplaying] = useState(false);
+
   const go = (s: Step) => {
     store.setCursor(explorerId, CH.id, { step: s });
     setStep(s);
   };
 
+  const afterSection = (normalNext: Step) => {
+    if (replaying) {
+      setReplaying(false);
+      go('complete');
+    } else {
+      go(normalNext);
+    }
+  };
+
+  const startReplay = (section: 'story' | 'explore' | 'write') => {
+    if (section === 'story') store.setCursor(explorerId, CH.id, { storyPage: 0 });
+    if (section === 'explore') store.setCursor(explorerId, CH.id, { exploreSub: 'q0' });
+    if (section === 'write') store.setCursor(explorerId, CH.id, { writeSub: 'compose' });
+    setReplaying(true);
+    go(section);
+  };
+
   const steps = STEPS;
   const stepIndex = steps.indexOf(step);
 
-  const body = useMemo(() => {
-    switch (step) {
-      case 'story':
-        return <Story explorerId={explorerId} onNext={() => go('explore')} />;
-      case 'explore':
-        return <Explore explorerId={explorerId} onNext={() => go('write')} />;
-      case 'write':
-        return <Write explorerId={explorerId} onNext={() => go('complete')} />;
-      case 'complete':
-        return <Complete explorerId={explorerId} onLeave={onLeave} onParent={onParent} />;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, explorerId, onLeave, onParent]);
+  let body: ReactNode = null;
+  switch (step) {
+    case 'story':
+      body = <Story explorerId={explorerId} onNext={() => afterSection('explore')} />;
+      break;
+    case 'explore':
+      body = <Explore explorerId={explorerId} onNext={() => afterSection('write')} />;
+      break;
+    case 'write':
+      body = <Write explorerId={explorerId} onNext={() => afterSection('complete')} />;
+      break;
+    case 'complete':
+      body = (
+        <Complete
+          explorerId={explorerId}
+          onLeave={onLeave}
+          onParent={onParent}
+          onReplay={startReplay}
+        />
+      );
+      break;
+  }
 
   return (
     <div className="app-journey chapter-bg">
