@@ -4,6 +4,7 @@ import { explorerById } from '../content/explorers';
 import { useStore } from '../lib/store';
 import {
   UNDERSTANDINGS,
+  SKILLS,
   understandingState,
   laterDifficulty,
   discoveries,
@@ -62,6 +63,26 @@ export default function ParentView({
               </div>
             );
           })}
+        </div>
+
+        {/* Sequence & Apply — other activity purposes, not comprehension discoveries */}
+        <div className="parent-sec">
+          <h4>Sequence &amp; apply</h4>
+          {SKILLS.map((u) => {
+            const s = understandingState(rec, u.key);
+            return (
+              <div className="evi-row" key={u.key}>
+                <span className="k">
+                  {u.child}
+                  {laterDifficulty(rec, u.key) && <span className="evi-note">· later needed help</span>}
+                </span>
+                <span className={`s ${s}`}>{STATE_LABEL[s]}</span>
+              </div>
+            );
+          })}
+          <p className="parent-sub" style={{ marginTop: 10, marginBottom: 0 }}>
+            Recognizing the order and choosing a caring response are their own purposes — not counted among the understanding discoveries.
+          </p>
         </div>
 
         {/* Participation */}

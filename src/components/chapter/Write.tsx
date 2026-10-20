@@ -236,8 +236,8 @@ function Apply({ explorerId, onDone }: { explorerId: string; onDone: () => void 
     setPicked(c.id);
     if (c.correct) {
       store.addAttempt(explorerId, CH.id, {
-        understanding: 'application',
-        source: 'application',
+        understanding: 'apply',
+        source: 'apply',
         correct: true,
         usedAnswerHint: attempts > 0,
       });
@@ -246,8 +246,8 @@ function Apply({ explorerId, onDone }: { explorerId: string; onDone: () => void 
       setFb({ good: true, text: c.feedback });
     } else {
       store.addAttempt(explorerId, CH.id, {
-        understanding: 'application',
-        source: 'application',
+        understanding: 'apply',
+        source: 'apply',
         correct: false,
         usedAnswerHint: false,
       });

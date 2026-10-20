@@ -1,6 +1,6 @@
 // Chapter 1 — A World Made Good (Genesis 1:1–2:3), Ellis (Grade 1).
 // Encoded from content/genesis-01-ellis.md. Scripture = WEB (shown distinct from retelling).
-import type { UnderstandingKey } from '../lib/record';
+import type { UnderstandingKey, EvidenceKey } from '../lib/record';
 
 export interface StoryPage {
   day?: string;
@@ -92,14 +92,16 @@ export const GENESIS_01 = {
     { w: 'Care for', d: 'To watch over something and help it, as God asked people to do.' },
   ],
 
+  // Four understanding questions — one per comprehension truth the book teaches:
+  // God created, creation was very good, people bear His image, His work was complete.
   questions: [
     {
-      key: 'creator' as UnderstandingKey,
+      key: 'created' as UnderstandingKey,
       prompt: 'Who made the world and everything in it?',
       banner: '/assets/scene-eden.webp',
       choices: [
         { id: 'god', text: 'God', correct: true, feedback: 'Yes! “In the beginning, God created.” Everything we see began with Him.' },
-        { id: 'sun', text: 'The sun', correct: false, feedback: 'The sun is bright, but the sun was made — on Day 4. Who made it?' },
+        { id: 'sun', text: 'The sun', correct: false, feedback: 'The sun is bright, but the sun was made — on Day Four. Who made it?' },
         { id: 'sea', text: 'The sea', correct: false, feedback: 'The sea is wide and deep, but it was made too. Who made the sea?' },
       ] as Choice[],
     },
@@ -109,8 +111,28 @@ export const GENESIS_01 = {
       banner: '/assets/scene-eden.webp',
       choices: [
         { id: 'verygood', text: 'It was very good', correct: true, feedback: 'That’s it — “God saw everything… and it was very good.”' },
-        { id: 'finished', text: 'It was finished', correct: false, feedback: 'It was finished — but look at what God said when He saw it. Genesis 1:31.' },
-        { id: 'big', text: 'It was big', correct: false, feedback: 'It is big! But that is not what God said about it. Look again at Genesis 1:31.' },
+        { id: 'finished', text: 'It was too small', correct: false, feedback: 'Look again at what God said when He saw it — Genesis 1:31.' },
+        { id: 'big', text: 'It was broken', correct: false, feedback: 'Not yet — God’s world was whole and perfect. What did He call it? Genesis 1:31.' },
+      ] as Choice[],
+    },
+    {
+      key: 'image' as UnderstandingKey,
+      prompt: 'God made people different from all the animals. What did God make people in?',
+      banner: '/assets/creation-day-6-v3.webp',
+      choices: [
+        { id: 'image', text: 'His own image', correct: true, feedback: 'Yes! “God created man in his own image.” People are made to be like God in special ways.' },
+        { id: 'water', text: 'The water', correct: false, feedback: 'Fish were made to live in the water. God made people in something far greater — His own image.' },
+        { id: 'dark', text: 'The dark', correct: false, feedback: 'Look again — God made people in His own image, to be like Him.' },
+      ] as Choice[],
+    },
+    {
+      key: 'complete' as UnderstandingKey,
+      prompt: 'On the seventh day, God rested. Why did God rest?',
+      banner: '/assets/creation-day-7-v3.webp',
+      choices: [
+        { id: 'finished', text: 'His work was all finished', correct: true, feedback: 'Right — God rested because His work was complete, not because He was tired.' },
+        { id: 'tired', text: 'He was tired', correct: false, feedback: 'God does not get tired. He rested because His good work was finished.' },
+        { id: 'dark', text: 'It got dark', correct: false, feedback: 'Look again — God rested because everything He made was finished and very good.' },
       ] as Choice[],
     },
   ],
@@ -160,9 +182,9 @@ export const GENESIS_01 = {
     gratitudeInvite: 'If you like, add why you are thankful for it.',
   },
 
-  // Application is its own care-able scenario, decoupled from the writing subject.
+  // Apply: its own care-able scenario, decoupled from the writing subject.
   application: {
-    key: 'application' as UnderstandingKey,
+    key: 'apply' as EvidenceKey,
     prompt: 'God gives us the job of caring for His world. Which is a good way to care for a plant?',
     icon: '🪴',
     image: '/assets/card-land.webp',

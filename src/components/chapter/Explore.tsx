@@ -26,23 +26,30 @@ export default function Explore({ explorerId, onNext }: { explorerId: string; on
     setSubState(s);
   };
 
+  const qIndex = sub === 'q0' ? 0 : sub === 'q1' ? 1 : sub === 'q2' ? 2 : sub === 'q3' ? 3 : -1;
+
   const promptText = useMemo(() => {
-    if (sub === 'q0') return CH.questions[0].prompt;
-    if (sub === 'q1') return CH.questions[1].prompt;
+    if (qIndex >= 0) return CH.questions[qIndex].prompt;
     if (sub === 'memory') return 'Let us practice our memory verse. ' + CH.memory.full;
     return CH.activity.instruction;
-  }, [sub]);
+  }, [sub, qIndex]);
 
   useEffect(() => {
     if (narration) speak(promptText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sub, narration]);
 
+  // Understand (four truths), then Remember (verse), then Sequence (the order).
   // Distinct keys so each question mounts with fresh state (no carryover).
+  const total = CH.questions.length;
   if (sub === 'q0')
-    return <QuestionCard key="q0" q={CH.questions[0]} explorerId={explorerId} onDone={() => go('q1')} />;
+    return <QuestionCard key="q0" q={CH.questions[0]} n={1} total={total} explorerId={explorerId} onDone={() => go('q1')} />;
   if (sub === 'q1')
-    return <QuestionCard key="q1" q={CH.questions[1]} explorerId={explorerId} onDone={() => go('memory')} />;
+    return <QuestionCard key="q1" q={CH.questions[1]} n={2} total={total} explorerId={explorerId} onDone={() => go('q2')} />;
+  if (sub === 'q2')
+    return <QuestionCard key="q2" q={CH.questions[2]} n={3} total={total} explorerId={explorerId} onDone={() => go('q3')} />;
+  if (sub === 'q3')
+    return <QuestionCard key="q3" q={CH.questions[3]} n={4} total={total} explorerId={explorerId} onDone={() => go('memory')} />;
   if (sub === 'memory')
     return <MemoryCard key="memory" explorerId={explorerId} onDone={() => go('order')} />;
   return <OrderCard key="order" explorerId={explorerId} onDone={onNext} />;
@@ -50,10 +57,14 @@ export default function Explore({ explorerId, onNext }: { explorerId: string; on
 
 function QuestionCard({
   q,
+  n,
+  total,
   explorerId,
   onDone,
 }: {
-  q: { key: 'creator' | 'good' | 'order' | 'application'; prompt: string; choices: Choice[]; banner?: string };
+  q: { key: 'created' | 'good' | 'image' | 'complete'; prompt: string; choices: Choice[]; banner?: string };
+  n: number;
+  total: number;
   explorerId: string;
   onDone: () => void;
 }) {
@@ -89,6 +100,7 @@ function QuestionCard({
 
   return (
     <div className="card">
+      <div className="guide-name">UNDERSTAND · {n} of {total}</div>
       {q.banner && <img className="scene-banner" src={q.banner} alt="" />}
       <p className="q-prompt">{q.prompt}</p>
       <div className="choice-grid">
@@ -197,16 +209,16 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
       if (next.length === a.correctOrder.length) {
         // Help is opt-in; opening it (or any wrong try) counts as answer support.
         store.addAttempt(explorerId, CH.id, {
-          understanding: 'order',
-          source: 'activity.order',
+          understanding: 'sequence',
+          source: 'activity.sequence',
           correct: true,
           usedAnswerHint: wrongCount > 0 || hintUsed,
         });
       }
     } else {
       store.addAttempt(explorerId, CH.id, {
-        understanding: 'order',
-        source: 'activity.order',
+        understanding: 'sequence',
+        source: 'activity.sequence',
         correct: false,
         usedAnswerHint: false,
       });
@@ -262,6 +274,7 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
 
   return (
     <div className="card">
+      <div className="guide-name">SEQUENCE</div>
       <p className="q-prompt">{a.title}</p>
       <p className="retelling" style={{ fontSize: 16, marginBottom: 16 }}>Tap a picture — or drag it — into each spot, in the order God made them.</p>
 

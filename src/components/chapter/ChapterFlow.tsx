@@ -6,20 +6,25 @@ import Write from './Write';
 import Complete from './Complete';
 import { GENESIS_01 } from '../../content/genesis01';
 import { useStore } from '../../lib/store';
-import type { ChapterRecord, UnderstandingKey } from '../../lib/record';
+import type { ChapterRecord, EvidenceKey } from '../../lib/record';
 
 type Step = 'story' | 'explore' | 'write' | 'complete';
 
 const CH = GENESIS_01;
 
-function hasCorrect(rec: ChapterRecord, key: UnderstandingKey) {
+function hasCorrect(rec: ChapterRecord, key: EvidenceKey) {
   return rec.attempts.some((a) => a.understanding === key && a.correct);
 }
 
 function resumeStep(rec: ChapterRecord): Step {
   if (!rec.participation.storyExperienced) return 'story';
   const exploreDone =
-    hasCorrect(rec, 'creator') && hasCorrect(rec, 'good') && hasCorrect(rec, 'order') && rec.participation.memoryPracticed;
+    hasCorrect(rec, 'created') &&
+    hasCorrect(rec, 'good') &&
+    hasCorrect(rec, 'image') &&
+    hasCorrect(rec, 'complete') &&
+    hasCorrect(rec, 'sequence') &&
+    rec.participation.memoryPracticed;
   if (!exploreDone) return 'explore';
   if (!(rec.participation.responseSaved && rec.participation.applicationDone)) return 'write';
   return 'complete';

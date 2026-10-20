@@ -1,13 +1,23 @@
 // The single authoritative learning record — pure types and derivations.
 // Everything (activities, writing, parent view) reads and writes through this.
 
-export type UnderstandingKey = 'creator' | 'good' | 'order' | 'application';
+// The four comprehension truths the chapter checks — the "discoveries".
+export type UnderstandingKey = 'created' | 'good' | 'image' | 'complete';
+// All recorded evidence keys: the four understandings plus the two other activity
+// purposes (sequence, apply), tracked with the same logic but shown apart.
+export type EvidenceKey = UnderstandingKey | 'sequence' | 'apply';
 
 export const UNDERSTANDINGS: { key: UnderstandingKey; child: string }[] = [
-  { key: 'creator', child: 'God made everything.' },
-  { key: 'good', child: 'God called His creation good.' },
-  { key: 'order', child: 'God made things in an order.' },
-  { key: 'application', child: 'God gives us the job of caring for His world.' },
+  { key: 'created', child: 'God made everything.' },
+  { key: 'good', child: 'God called His creation very good.' },
+  { key: 'image', child: 'God made people in His own image.' },
+  { key: 'complete', child: 'God finished all His good work.' },
+];
+
+// Other activity purposes — not comprehension "discoveries", shown separately.
+export const SKILLS: { key: 'sequence' | 'apply'; child: string }[] = [
+  { key: 'sequence', child: 'Put the days of creation in order.' },
+  { key: 'apply', child: 'Chose a good way to care for creation.' },
 ];
 
 // One attempt at demonstrating an understanding. `usedAnswerHint` records answer
@@ -15,8 +25,8 @@ export const UNDERSTANDINGS: { key: UnderstandingKey; child: string }[] = [
 // Access supports (narration, large text) are NOT recorded here; they never affect
 // independence.
 export interface Attempt {
-  understanding: UnderstandingKey;
-  source: string; // e.g. 'q.creator', 'activity.order'
+  understanding: EvidenceKey;
+  source: string; // e.g. 'q.created', 'activity.sequence'
   correct: boolean;
   usedAnswerHint: boolean;
   at: number;
@@ -52,7 +62,7 @@ export interface AccessSupports {
 
 // Exact position in the flow, saved so a child resumes where they left off.
 export type FlowStep = 'story' | 'explore' | 'write' | 'complete';
-export type ExploreSub = 'q0' | 'q1' | 'memory' | 'order';
+export type ExploreSub = 'q0' | 'q1' | 'q2' | 'q3' | 'memory' | 'order';
 export type WriteSub = 'compose' | 'apply';
 
 export interface Cursor {
@@ -111,7 +121,7 @@ export const defaultAccess: AccessSupports = { narration: false, largeText: fals
 // never downgrades an earlier independent success.
 export function understandingState(
   rec: ChapterRecord,
-  key: UnderstandingKey,
+  key: EvidenceKey,
 ): UnderstandingState {
   const a = rec.attempts.filter((x) => x.understanding === key);
   if (a.length === 0) return 'not_checked';
@@ -123,7 +133,7 @@ export function understandingState(
 // A wobble AFTER an earlier independent success — the only case where "later" is
 // accurate. Support needed from the first attempt is part of reaching the answer,
 // not a regression, and is already captured by the "with support" state.
-export function laterDifficulty(rec: ChapterRecord, key: UnderstandingKey): boolean {
+export function laterDifficulty(rec: ChapterRecord, key: EvidenceKey): boolean {
   const a = rec.attempts.filter((x) => x.understanding === key);
   if (a.length < 2) return false;
   const firstIndependent = a.findIndex((x) => x.correct && !x.usedAnswerHint);
