@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { GENESIS_01 } from '../../content/genesis01';
 import { useStore } from '../../lib/store';
 import { speak } from '../../lib/speak';
@@ -53,7 +53,7 @@ function QuestionCard({
   explorerId,
   onDone,
 }: {
-  q: { key: 'creator' | 'good' | 'order' | 'application'; prompt: string; choices: Choice[] };
+  q: { key: 'creator' | 'good' | 'order' | 'application'; prompt: string; choices: Choice[]; banner?: string };
   explorerId: string;
   onDone: () => void;
 }) {
@@ -89,6 +89,7 @@ function QuestionCard({
 
   return (
     <div className="card">
+      {q.banner && <img className="scene-banner" src={q.banner} alt="" />}
       <p className="q-prompt">{q.prompt}</p>
       <div className="choice-grid">
         {q.choices.map((c) => (
@@ -175,8 +176,14 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
   const [showHint, setShowHint] = useState(false);
   const [shakeId, setShakeId] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  // Pointer-based drag so it works on touchscreens/Chromebooks AND mouse.
   const [dragId, setDragId] = useState<string | null>(null);
-  const [dropReady, setDropReady] = useState(false);
+  const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const [overNext, setOverNext] = useState(false);
+  const startRef = useRef<{ x: number; y: number } | null>(null);
+  const lastRef = useRef<{ x: number; y: number } | null>(null);
+  const movedRef = useRef(false);
+  const suppressClickRef = useRef(false);
   const complete = placed.length === a.correctOrder.length;
   const nextIndex = placed.length;
 
@@ -210,6 +217,49 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
     }
   };
 
+  // Drag lifecycle: window listeners while a card is held, so the pointer can
+  // leave the card and still track slots. Tap (no movement) falls through to onClick.
+  useEffect(() => {
+    if (!dragId) return;
+    const overNextSlot = (x: number, y: number) => {
+      const el = document.elementFromPoint(x, y) as Element | null;
+      return !!el?.closest('[data-next-slot="true"]');
+    };
+    const move = (e: PointerEvent) => {
+      const s = startRef.current;
+      if (s && Math.hypot(e.clientX - s.x, e.clientY - s.y) > 6) movedRef.current = true;
+      if (movedRef.current) {
+        lastRef.current = { x: e.clientX, y: e.clientY };
+        setGhost({ x: e.clientX, y: e.clientY });
+        setOverNext(overNextSlot(e.clientX, e.clientY));
+      }
+    };
+    const up = () => {
+      // Use the last tracked move position — some pointerup events report (0,0).
+      const pos = lastRef.current;
+      if (movedRef.current && pos) {
+        if (overNextSlot(pos.x, pos.y)) place(dragId);
+        suppressClickRef.current = true; // a real drag happened — don't also tap-place
+      }
+      setDragId(null);
+      setGhost(null);
+      setOverNext(false);
+      movedRef.current = false;
+      lastRef.current = null;
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    return () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dragId]);
+
+  const dragCard = dragId ? a.cards.find((c) => c.id === dragId) : null;
+
   return (
     <div className="card">
       <p className="q-prompt">{a.title}</p>
@@ -223,10 +273,8 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
           return (
             <div
               key={i}
-              className={`order-slot ${card ? 'filled' : ''} ${isNext && dropReady ? 'drop-ready' : ''}`}
-              onDragOver={isNext ? (e) => { e.preventDefault(); setDropReady(true); } : undefined}
-              onDragLeave={isNext ? () => setDropReady(false) : undefined}
-              onDrop={isNext ? () => { setDropReady(false); if (dragId) place(dragId); } : undefined}
+              data-next-slot={isNext ? 'true' : undefined}
+              className={`order-slot ${card ? 'filled' : ''} ${isNext && overNext ? 'drop-ready' : ''}`}
             >
               <span className="slot-num">{i + 1}</span>
               {card ? (
@@ -249,18 +297,31 @@ function OrderCard({ explorerId, onDone }: { explorerId: string; onDone: () => v
             return (
               <button
                 key={c.id}
-                className={`order-card ${shakeId === c.id ? 'shake' : ''}`}
+                className={`order-card ${shakeId === c.id ? 'shake' : ''} ${dragId === c.id && ghost ? 'dragging' : ''}`}
                 disabled={used}
-                draggable={!used}
-                onDragStart={() => setDragId(c.id)}
-                onDragEnd={() => { setDragId(null); setDropReady(false); }}
-                onClick={() => place(c.id)}
+                onPointerDown={(e) => {
+                  if (used || complete) return;
+                  suppressClickRef.current = false;
+                  movedRef.current = false;
+                  startRef.current = { x: e.clientX, y: e.clientY };
+                  setDragId(c.id);
+                }}
+                onClick={() => {
+                  if (suppressClickRef.current) { suppressClickRef.current = false; return; }
+                  place(c.id);
+                }}
               >
                 <img src={c.img} alt={c.label} />
                 <span className="lab">{c.label}</span>
               </button>
             );
           })}
+        </div>
+      )}
+
+      {ghost && dragCard && (
+        <div className="order-ghost" style={{ left: ghost.x, top: ghost.y }} aria-hidden="true">
+          <img src={dragCard.img} alt="" />
         </div>
       )}
 

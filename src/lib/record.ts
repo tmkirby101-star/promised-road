@@ -120,13 +120,15 @@ export function understandingState(
   return 'practice_needed';
 }
 
-// A later wobble to surface to parents without erasing the success.
+// A wobble AFTER an earlier independent success — the only case where "later" is
+// accurate. Support needed from the first attempt is part of reaching the answer,
+// not a regression, and is already captured by the "with support" state.
 export function laterDifficulty(rec: ChapterRecord, key: UnderstandingKey): boolean {
   const a = rec.attempts.filter((x) => x.understanding === key);
   if (a.length < 2) return false;
-  const best = understandingState(rec, key);
-  const last = a[a.length - 1];
-  return (best === 'independent' || best === 'with_support') && (!last.correct || last.usedAnswerHint);
+  const firstIndependent = a.findIndex((x) => x.correct && !x.usedAnswerHint);
+  if (firstIndependent === -1) return false; // never independent → nothing to lose "later"
+  return a.slice(firstIndependent + 1).some((x) => !x.correct || x.usedAnswerHint);
 }
 
 // Discoveries: understandings reached at least "with support" (0–4). Measures understanding.

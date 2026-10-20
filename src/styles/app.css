@@ -294,3 +294,24 @@ body.pr-large{ font-size:18px; }
 .wstep span{ font-size:12px; color:#8aa3bf; padding:4px 12px; border-radius:20px; background:#ffffff14; }
 .chapter-bg .wstep span{ color:#9db6d2; }
 .wstep span.on{ background:var(--sb-gold); color:#2a1c06; font-weight:700; }
+
+/* --- QA pass 2: banners, writing review, logo plate, touch drag --- */
+
+/* Contextual illustration banner on questions + application */
+.scene-banner{ width:100%; height:150px; object-fit:cover; border-radius:14px; margin:0 0 18px; display:block; box-shadow:0 6px 18px #06182f33; }
+
+/* The child's writing shown on the Check screen so they can review what they wrote */
+.my-writing.pinned{ align-items:flex-start; }
+.my-writing .mw-label{ font:600 12px system-ui; letter-spacing:.3px; color:#7a6a45; text-transform:uppercase; }
+.my-writing .mw-text{ font:400 19px Georgia,serif; color:#1d3350; margin:4px 0 10px; }
+.my-writing .mw-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+/* Logo plate so the navy wordmark stays legible on dark surfaces */
+.app-journey.chapter-bg .inner-bar img{ background:var(--paper); padding:5px 11px; border-radius:10px; box-shadow:0 2px 7px #04142a66; }
+.brand-wordmark{ background:var(--paper); padding:8px 16px; border-radius:14px; box-shadow:0 3px 14px #05172e3a; }
+
+/* Touch-friendly drag: no scroll-hijack, a floating ghost that follows the finger */
+.order-card{ touch-action:none; user-select:none; -webkit-user-select:none; }
+.order-card.dragging{ opacity:.35; }
+.order-ghost{ position:fixed; z-index:200; width:120px; transform:translate(-50%,-50%); pointer-events:none; border-radius:12px; overflow:hidden; box-shadow:0 12px 30px #06182f66; }
+.order-ghost img{ width:100%; height:80px; object-fit:cover; display:block; }

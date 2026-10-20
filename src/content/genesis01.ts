@@ -96,6 +96,7 @@ export const GENESIS_01 = {
     {
       key: 'creator' as UnderstandingKey,
       prompt: 'Who made the world and everything in it?',
+      banner: '/assets/scene-eden.webp',
       choices: [
         { id: 'god', text: 'God', correct: true, feedback: 'Yes! “In the beginning, God created.” Everything we see began with Him.' },
         { id: 'sun', text: 'The sun', correct: false, feedback: 'The sun is bright, but the sun was made — on Day 4. Who made it?' },
@@ -105,6 +106,7 @@ export const GENESIS_01 = {
     {
       key: 'good' as UnderstandingKey,
       prompt: 'When God looked at everything He had made, what did He say about it?',
+      banner: '/assets/scene-eden.webp',
       choices: [
         { id: 'verygood', text: 'It was very good', correct: true, feedback: 'That’s it — “God saw everything… and it was very good.”' },
         { id: 'finished', text: 'It was finished', correct: false, feedback: 'It was finished — but look at what God said when He saw it. Genesis 1:31.' },
@@ -161,8 +163,9 @@ export const GENESIS_01 = {
   // Application is its own care-able scenario, decoupled from the writing subject.
   application: {
     key: 'application' as UnderstandingKey,
-    prompt: 'God gives us the job of caring for His world. Here is a little plant. Which is a good way to care for it?',
+    prompt: 'God gives us the job of caring for His world. Which is a good way to care for a plant?',
     icon: '🪴',
+    image: '/assets/card-land.webp',
     choices: [
       { id: 'water', text: 'Give it water and light', correct: true, feedback: 'Yes! Plants need water and light to grow. That is caring for it.' },
       { id: 'dark', text: 'Hide it in the dark', correct: false, feedback: 'A plant needs light to live. Would hiding it in the dark help it grow?' },

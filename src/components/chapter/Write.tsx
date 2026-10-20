@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GENESIS_01 } from '../../content/genesis01';
 import { useStore } from '../../lib/store';
+import { speak } from '../../lib/speak';
 import type { Choice } from '../../content/genesis01';
 
 const CH = GENESIS_01;
@@ -129,7 +130,17 @@ function Compose({ explorerId, onDone }: { explorerId: string; onDone: () => voi
 
       {micro === 'check' && subject && (
         <>
-          <Pinned />
+          <div className="pinned my-writing" style={{ marginBottom: 16 }}>
+            <img src={subject.img} alt={subject.label} />
+            <div className="pin-body">
+              <div className="mw-label">What I wrote about {subject.label}</div>
+              <p className="mw-text">“{text}”</p>
+              <div className="mw-actions">
+                <button className="pr-secondary" onClick={() => speak(text)}>🔊 Read my writing</button>
+                <button className="pr-secondary" onClick={() => setMicro('write')}>✏️ Edit</button>
+              </div>
+            </div>
+          </div>
           <div className="selfcheck">
             <div className="q">Did you name something God made?</div>
             <div className="opts">
@@ -212,10 +223,8 @@ function Apply({ explorerId, onDone }: { explorerId: string; onDone: () => void 
   return (
     <div className="card">
       <div className="guide-name">CARING FOR GOD'S WORLD</div>
-      <p className="q-prompt">
-        <span style={{ fontSize: 40, marginRight: 10 }}>{ap.icon}</span>
-        {ap.prompt}
-      </p>
+      {ap.image && <img className="scene-banner" src={ap.image} alt="A young plant growing in the soil" />}
+      <p className="q-prompt">{ap.prompt}</p>
       <div className="choice-grid">
         {ap.choices.map((c) => (
           <button
