@@ -4,10 +4,11 @@ import './book.css';
 
 /**
  * Isolated storybook prototype. Reachable at #book; does not touch the working
- * chapter. Uses existing approved creation artwork — no new assets.
+ * chapter. Day One uses purpose-made portrait artwork; Day Two retains the
+ * existing creation card while the illustration direction is reviewed.
  *
  * The left page is PORTRAIT: artwork must be composed for that upright space,
- * not a landscape scene. Here the square cards cover-fill it to show the area.
+ * not a landscape scene.
  */
 
 interface Spread {
@@ -23,7 +24,7 @@ const SPREADS: Spread[] = [
   {
     key: 'day1',
     day: 'Day One',
-    img: '/assets/card-light.webp',
+    img: '/assets/scene-day1-light-v1.webp',
     alt: 'Light breaking over the dark waters',
     narration: [
       'The earth lay dark and empty, and the deep waters were still. Then God spoke into the darkness: “Let there be light!” — and there was light.',
