@@ -365,8 +365,9 @@ body.pr-large{ font-size:18px; }
 .app-frame .inner-bar{display:none}
 .app-rail{position:fixed;inset:0 auto 0 0;width:var(--rail-width);z-index:100;background:linear-gradient(180deg,#102e4c,#091f36);border-right:1px solid #b68d4540;display:flex;align-items:center;flex-direction:column;color:#e9d3a2;padding:24px 8px 16px}
 .app-rail button{cursor:pointer;font:inherit}
-.rail-brand{border:0;background:none;color:#e6c278;font:29px Georgia,serif!important;letter-spacing:2px;width:100%;padding:0 0 24px}
-.rail-brand>span{display:block;font:6px/1.6 system-ui;letter-spacing:1px;margin-top:5px}
+.rail-brand{border:0;background:none;width:100%;padding:0 0 24px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.rail-brand svg{display:block}
+.rail-brand>span{display:block;font:6px/1.6 system-ui;letter-spacing:1px;color:#e6c278;text-align:center}
 .app-rail nav{width:100%;display:grid;gap:10px}
 .app-rail nav button{position:relative;display:flex;align-items:center;flex-direction:column;gap:7px;width:100%;border:1px solid transparent;border-radius:10px;background:none;color:#c8bc9e;padding:12px 0;font-size:11px}
 .app-rail nav svg{width:27px;height:27px;color:#d6b77a}

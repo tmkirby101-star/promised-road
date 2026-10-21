@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { explorerById } from '../content/explorers';
 import { useStore } from '../lib/store';
 import { stopSpeaking } from '../lib/speak';
+import BrandMark from './BrandMark';
 
 export type Destination = 'journey' | 'books' | 'arcade' | 'passport';
 const destinations: { id: Destination; label: string; path: string }[] = [
@@ -20,7 +21,7 @@ export default function AppRail({ explorerId, active, onNavigate, onSwitch, onPa
   return <>
     {open && <button className="rail-scrim" aria-label="Close explorer menu" onClick={() => setOpen(false)} />}
     <aside className="app-rail" aria-label="App navigation">
-      <button className="rail-brand" aria-label="The Promised Road — Journey" onClick={() => { setOpen(false); onNavigate('journey'); }}>PR<span>THE PROMISED ROAD</span></button>
+      <button className="rail-brand" aria-label="The Promised Road — Journey" onClick={() => { setOpen(false); onNavigate('journey'); }}><BrandMark tone="onDark" size={44} title="" /><span>THE PROMISED ROAD</span></button>
       <nav aria-label="Main navigation">{destinations.map((d) => <button key={d.id} aria-current={active === d.id ? 'page' : undefined} onClick={() => { setOpen(false); onNavigate(d.id); }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d.path} /></svg><span>{d.label}</span>
       </button>)}</nav>
