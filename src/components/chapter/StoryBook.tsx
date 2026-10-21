@@ -18,10 +18,9 @@ const CHID = 'genesis-01';
 const TOTAL_FACES = SPREADS.length * 2; // [img0, text0, …]
 
 const WELCOME = [
-  { title: 'Welcome to The Promised Road', line: 'Welcome, friend! I am Isaiah, one of God’s prophets. I will be your guide as we begin The Promised Road. Together, we will explore the Bible and learn who God is, how much He loves us, and how we can trust Him.' },
-  { title: 'One great story', line: 'The Bible has sixty-six books. Together, they tell one great story. God made a good world. People turned away from Him and sinned. But God did not leave us without hope. He promised a Savior: Jesus, His Son. We will follow that promise through the Bible.' },
-  { title: 'Why begin in Genesis?', line: 'Jesus is at the heart of God’s story. So why start here? Genesis means “beginning.” It tells us who made us, what went wrong, and why we need a Savior. Knowing the beginning helps us understand the good news: Jesus died for our sins and rose again. Salvation is God’s gift, received through faith in Jesus.' },
-  { title: 'Here is how we will explore', line: 'On your Journey, we will read Bible stories and Scripture, explore what they mean, remember God’s words, and write about what we discover. We will learn to live in ways that please Him. Books opens our available lessons. The Arcade has games you can play anytime. Your Passport keeps your chapter stamps and game achievements. Tap your name for help with reading or bigger text. Ready? Let us begin with the world God made.' },
+  { title: 'Hi! I’m Isaiah.', line: 'Come explore the Bible with me! We will learn about God and His Son, Jesus.' },
+  { title: 'Let’s start at the beginning.', line: 'Genesis tells us how God made the world. This is where the story that leads to Jesus begins!' },
+  { title: 'Ready to explore?', line: 'We’ll read, play, remember Bible verses, and write. Tap “Open the book” to begin!' },
 ];
 
 export default function StoryBook({ explorerId, onNext, replaying }: { explorerId: string; onNext: () => void; replaying?: boolean }) {
