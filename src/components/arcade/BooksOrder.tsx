@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { shuffle } from '../../content/arcadeBooks';
 import { awardPoints, type GameResult } from '../../lib/arcadeStore';
+import { useRoundClock } from './useRoundClock';
 import { Hud, type OnFinish } from './kit';
 
 // A ready-made canonical sequence to place in order (Genesis→Revelation prefix,
@@ -30,7 +31,6 @@ export default function BooksOrder({
   const [placed, setPlaced] = useState(0);
   const [score, setScore] = useState(0);
   const [firstTry, setFirstTry] = useState(0);
-  const [elapsed, setElapsed] = useState(0);
   const [wrongBook, setWrongBook] = useState<string | null>(null);
   const [fb, setFb] = useState<{ text: string; good: boolean } | null>(null);
 
@@ -38,11 +38,7 @@ export default function BooksOrder({
   const cleanRef = useRef(true);
   const finishedRef = useRef(false);
 
-  useEffect(() => {
-    if (!config.timed) return;
-    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
-    return () => clearInterval(id);
-  }, [config.timed]);
+  const elapsed = useRoundClock(config.timed && placed < total);
 
   useEffect(() => {
     if (placed < total || finishedRef.current) return;
@@ -96,24 +92,21 @@ export default function BooksOrder({
         {fb ? <div className="ac-fb-line">{fb.text}</div> : <div className="ac-fb-line hint">Tap the first book.</div>}
       </div>
 
-      <div className="ac-slots">
-        {seq.map((_, i) => (
-          <div className="ac-slot" key={i}>
-            <span className="ac-slotnum">{i + 1}</span>
-            {i < placed ? (
-              <span className="ac-filled">{seq[i]}</span>
-            ) : i === placed ? (
-              <span className="ac-filled next">next …</span>
-            ) : (
-              <span className="ac-filled empty" />
-            )}
-          </div>
-        ))}
+      <div className="ac-order-progress" aria-live="polite">
+        <span>{placed} of {total} books placed</span>
+        <progress value={placed} max={total} aria-label="Books placed" />
       </div>
-
+      <div className="ac-current-slot">
+        <span className="ac-slotnum">{placed + 1}</span>
+        <span>{placed === 0 ? 'Which book comes first?' : <>After <b>{seq[placed - 1]}</b>, what comes next?</>}</span>
+      </div>
+      {placed > 0 && <div className="ac-recent" aria-label="Recently placed books">
+        {seq.slice(Math.max(0, placed - 3), placed).map((book) => <span key={book}>{book}</span>)}
+      </div>}
       <div className="ac-pool">
         {pool.map((b) => {
           const used = placedBooks.has(b);
+          if (used) return null;
           return (
             <button
               key={b}
@@ -126,6 +119,9 @@ export default function BooksOrder({
           );
         })}
       </div>
+      {placed > 0 && <details className="ac-order-history"><summary>See all {placed} books placed</summary>
+        <ol>{seq.slice(0, placed).map((book) => <li key={book}>{book}</li>)}</ol>
+      </details>}
     </div>
   );
 }

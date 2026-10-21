@@ -8,6 +8,7 @@ export type GameId = 'order' | 'sort' | 'trivia';
 
 // Result handed up by a game when a round finishes.
 export interface GameResult {
+  runId?: string; // stable across React renders; one completed run is recorded once
   game: GameId;
   boardKey: string; // stable key for the family board + personal best (save == browse)
   label: string; // human label, e.g. "Gospels · Ordering"
@@ -43,6 +44,7 @@ export interface MissRecord {
 }
 
 interface ArcadeShape {
+  recorded: Record<string, RecordOutcome>;
   personal: Record<string, Record<string, PersonalBest>>; // explorerId -> boardKey -> PB
   achievements: Record<string, Record<string, number>>; // explorerId -> achId -> earnedAt
   misses: Record<string, MissRecord[]>; // explorerId -> missed trivia questions
@@ -50,7 +52,7 @@ interface ArcadeShape {
 }
 
 function empty(): ArcadeShape {
-  return { personal: {}, achievements: {}, misses: {}, boards: {} };
+  return { recorded: {}, personal: {}, achievements: {}, misses: {}, boards: {} };
 }
 
 function load(): ArcadeShape {
@@ -151,6 +153,7 @@ export const arcade = {
   // Practice rounds pass record:false so they don't inflate personal bests.
   recordPersonal(explorerId: string, r: GameResult, keepBest = true): RecordOutcome {
     const s = load();
+    if (r.runId && s.recorded[r.runId]) return s.recorded[r.runId];
     const firstTryPct = r.total > 0 ? Math.round((r.firstTry / r.total) * 100) : 0;
 
     const byExp = s.personal[explorerId] || (s.personal[explorerId] = {});
@@ -193,8 +196,14 @@ export const arcade = {
     }
     const newAchievements = earnedList(s, explorerId, ids);
 
+    const outcome = { scoreImproved, cleanTimeImproved, qualifiesClean, qualifiesScore, firstTryPct, newAchievements };
+    if (r.runId) {
+      s.recorded[r.runId] = outcome;
+      const ids = Object.keys(s.recorded);
+      if (ids.length > 200) delete s.recorded[ids[0]];
+    }
     save(s);
-    return { scoreImproved, cleanTimeImproved, qualifiesClean, qualifiesScore, firstTryPct, newAchievements };
+    return outcome;
   },
 
   // Add a result to the shared family board under the given initials.

@@ -31,13 +31,10 @@ const ORDER_SCOPES: { id: string; label: string; seq: string[] }[] = [
 ];
 const orderScopeById = (id: string) => ORDER_SCOPES.find((s) => s.id === id)!;
 
-function buildOrderConfig(scopeId: string, length: RoundLength, timed: boolean): OrderConfig {
+export function buildOrderConfig(scopeId: string, timed: boolean): OrderConfig {
   const scope = orderScopeById(scopeId);
-  const n = length === 'quick' ? 7 : length === 'standard' ? 15 : scope.seq.length;
-  const seq = scope.seq.slice(0, Math.min(n, scope.seq.length));
-  const scopeTag = scope.id === 'all' ? (seq.length === seqAll.length ? 'all' : 'allp') : scope.id;
-  const label = seq.length < scope.seq.length ? `${scope.label} · first ${seq.length}` : scope.label;
-  return { seq, boardKey: `order|${scope.id}|${length}`, label, scopeTag, timed };
+  return { seq: scope.seq, boardKey: `order|${scope.id}|full|${timed ? 'timed' : 'untimed'}|v2`,
+    label: `${scope.label} · all ${scope.seq.length} books`, scopeTag: scope.id, timed };
 }
 
 const TIERS: TriviaTier[] = ['easy', 'medium', 'hard'];
@@ -63,6 +60,9 @@ export default function Arcade({ explorerId, onExit }: { explorerId: string; onE
   const [view, setView] = useState<View>({ s: 'menu' });
   const [length, setLength] = useState<RoundLength>('standard');
   const [timed, setTimed] = useState(false);
+  const [tier, setTier] = useState<TriviaTier>('easy');
+  const [scopeId, setScopeId] = useState('all');
+  const [challengeId, setChallengeId] = useState('otnt');
   const [nonce, setNonce] = useState(1);
 
   const misses = arcade.getMisses(explorerId);
@@ -90,7 +90,7 @@ export default function Arcade({ explorerId, onExit }: { explorerId: string; onE
       arcade.updateMisses(explorerId, detail?.missed ?? [], detail?.corrected ?? []);
     }
     const replay = view.s === 'play' ? view.play : { kind: 'trivia', cfg: { tier: 'easy', length, timed } } as Play;
-    setView({ s: 'finish', result, detail, replay });
+    setView({ s: 'finish', result: { ...result, runId: crypto.randomUUID() }, detail, replay });
   };
 
   // ---------- MENU ----------
@@ -118,70 +118,49 @@ export default function Arcade({ explorerId, onExit }: { explorerId: string; onE
   // ---------- SETUP ----------
   if (view.s === 'setup') {
     const g = view.game;
-    const lengthPicker = (
-      <>
-        <div className="ac-setup-label">How long?</div>
-        <div className="ac-chips">
-          {LENGTHS.map((l) => (
-            <button key={l.id} className={`ac-chip${length === l.id ? ' on' : ''}`} onClick={() => setLength(l.id)}>{l.label}</button>
-          ))}
-        </div>
-        <div className="ac-setup-label">Clock?</div>
-        <div className="ac-chips">
-          <button className={`ac-chip${!timed ? ' on' : ''}`} onClick={() => setTimed(false)}>Untimed</button>
-          <button className={`ac-chip${timed ? ' on' : ''}`} onClick={() => setTimed(true)}>Timed</button>
-        </div>
-      </>
-    );
+    const sortScope = SORT_CHALLENGES.find((c) => c.id === challengeId)!;
+    const available = g === 'trivia' ? TRIVIA[tier].length : sortScope.items.length;
+    const count = g === 'order' ? orderScopeById(scopeId).seq.length :
+      Math.min(available, length === 'quick' ? (g === 'trivia' ? 5 : 6) : length === 'standard' ? (g === 'trivia' ? 10 : 12) : (g === 'trivia' ? 40 : available));
+    const launch = () => {
+      if (g === 'trivia') startPlay({ kind: g, cfg: { tier, length, timed } });
+      else if (g === 'order') startPlay({ kind: g, cfg: buildOrderConfig(scopeId, timed) });
+      else startPlay({ kind: g, cfg: { challengeId, length, timed } });
+    };
     return (
       <Shell onExit={onExit} explorerId={explorerId} onBack={() => setView({ s: 'menu' })}>
-        {g === 'trivia' && (
-          <>
-            <h2 className="ac-h2">Bible Trivia</h2>
-            <div className="ac-setup-label">Difficulty</div>
-            <div className="ac-chips">
-              {TIERS.map((t) => (
-                <button key={t} className="ac-scope" onClick={() => startPlay({ kind: 'trivia', cfg: { tier: t, length, timed } })}>
-                  {t === 'easy' ? '😊' : t === 'medium' ? '🤔' : '🔥'} {cap(t)}<small>{TRIVIA[t].length} questions</small>
-                </button>
-              ))}
-            </div>
-            {misses.length > 0 && (
-              <button className="ac-practice" onClick={() => startPlay({ kind: 'trivia', cfg: { tier: 'easy', length: 'full', timed: false, practice: practiceItems() } })}>
-                🎯 Practice my misses <small>{misses.length} to review</small>
-              </button>
-            )}
-            {lengthPicker}
-          </>
-        )}
-        {g === 'order' && (
-          <>
-            <h2 className="ac-h2">Books in Order</h2>
-            {lengthPicker}
-            <div className="ac-setup-label">What do you want to order?</div>
-            <div className="ac-chips">
-              {ORDER_SCOPES.map((s) => (
-                <button key={s.id} className={`ac-scope${s.id === 'all' ? ' challenge' : ''}`} onClick={() => startPlay({ kind: 'order', cfg: buildOrderConfig(s.id, length, timed) })}>
-                  {s.id === 'all' ? '🏆 ' : ''}{s.label}<small>{s.seq.length} books</small>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-        {g === 'sort' && (
-          <>
-            <h2 className="ac-h2">Sort the Books</h2>
-            {lengthPicker}
-            <div className="ac-setup-label">Pick a challenge</div>
-            <div className="ac-chips">
-              {SORT_CHALLENGES.map((c) => (
-                <button key={c.id} className={`ac-scope${c.id === 'mixed' ? ' challenge' : ''}`} onClick={() => startPlay({ kind: 'sort', cfg: { challengeId: c.id, length, timed } })}>
-                  {c.id === 'mixed' ? '🏆 ' : ''}{c.title}<small>{c.sub}</small>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
+        <h2 className="ac-h2">{g === 'trivia' ? 'Bible Trivia' : g === 'order' ? 'Books in Order' : 'Sort the Books'}</h2>
+        <div className="ac-setup-panel">
+          {g === 'trivia' && <label className="ac-field">Difficulty
+            <select value={tier} onChange={(e) => setTier(e.target.value as TriviaTier)}>
+              {TIERS.map((t) => <option key={t} value={t}>{cap(t)} · {TRIVIA[t].length} questions in the bank</option>)}
+            </select>
+          </label>}
+          {g === 'order' && <label className="ac-field">What do you want to order?
+            <select value={scopeId} onChange={(e) => setScopeId(e.target.value)}>
+              {ORDER_SCOPES.map((v) => <option key={v.id} value={v.id}>{v.label} · all {v.seq.length} books</option>)}
+            </select>
+          </label>}
+          {g === 'sort' && <label className="ac-field">Choose a challenge
+            <select value={challengeId} onChange={(e) => setChallengeId(e.target.value)}>
+              {SORT_CHALLENGES.map((v) => <option key={v.id} value={v.id}>{v.title} — {v.sub}</option>)}
+            </select>
+          </label>}
+          {g !== 'order' && <fieldset className="ac-choice-field"><legend>How long?</legend><div className="ac-chips">
+            {LENGTHS.map((l) => {
+              const n = Math.min(available, l.id === 'quick' ? (g === 'trivia' ? 5 : 6) : l.id === 'standard' ? (g === 'trivia' ? 10 : 12) : (g === 'trivia' ? 40 : available));
+              return <button key={l.id} aria-pressed={length === l.id} className={`ac-chip${length === l.id ? ' on' : ''}`} onClick={() => setLength(l.id)}>{g === 'trivia' && l.id === 'full' ? 'Long' : l.label} · {n} {g === 'trivia' ? 'questions' : 'books'}</button>;
+            })}
+          </div></fieldset>}
+          <fieldset className="ac-choice-field"><legend>Play your way</legend><div className="ac-chips">
+            <button aria-pressed={!timed} className={`ac-chip${!timed ? ' on' : ''}`} onClick={() => setTimed(false)}>Untimed</button>
+            <button aria-pressed={timed} className={`ac-chip${timed ? ' on' : ''}`} onClick={() => setTimed(true)}>Timed</button>
+          </div></fieldset>
+          <p className="ac-round-summary">{count} {g === 'trivia' ? 'questions' : 'books'} · {timed ? 'Timed challenge' : 'At your own pace'}{g === 'order' ? ' · The entire selected section' : ''}</p>
+          {timed && <p className="ac-clock-note">The clock counts thinking and choosing. It pauses for feedback and while this tab is hidden.</p>}
+          <button className="ac-next" onClick={launch}>Play →</button>
+        </div>
+        {g === 'trivia' && misses.length > 0 && <button className="ac-practice" onClick={() => startPlay({ kind: 'trivia', cfg: { tier: 'easy', length: 'full', timed: false, practice: practiceItems() } })}>Practice my misses · {misses.length} to review</button>}
       </Shell>
     );
   }
@@ -216,7 +195,7 @@ export default function Arcade({ explorerId, onExit }: { explorerId: string; onE
             if (items.length) startPlay({ kind: 'trivia', cfg: { tier: 'easy', length: 'full', timed: false, practice: items } });
           }}
           hasMisses={misses.length > 0}
-          onViewBoard={() => setView({ s: 'wallBoard', boardKey: view.result.boardKey, label: view.result.label, backGame: view.result.game })}
+          onViewBoard={() => setView({ s: 'wallBoard', boardKey: view.result.boardKey, label: `${view.result.label} · ${view.result.timed ? 'Timed' : 'Untimed'}`, backGame: view.result.game })}
         />
       </Shell>
     );
@@ -288,7 +267,7 @@ function Shell({ children, onExit, explorerId, onBack, backLabel = '← Back' }:
 function GameCard({ emoji, title, desc, onClick }: { emoji: string; title: string; desc: string; onClick: () => void }) {
   return (
     <button className="ac-gamecard" onClick={onClick}>
-      <span className="ac-ge">{emoji}</span>
+      <span aria-hidden="true" className="ac-game-art" style={{ backgroundPosition: `${['🔢', '🗂️', '❓', '🏆'].indexOf(emoji) * 100 / 3}% center` }} />
       <span className="ac-gt">{title}</span>
       <span className="ac-gd">{desc}</span>
     </button>
@@ -311,13 +290,16 @@ function Badges({ explorerId }: { explorerId: string }) {
 }
 
 function boardList(game: 'trivia' | 'order' | 'sort'): { boardKey: string; label: string }[] {
-  const out: { boardKey: string; label: string }[] = [];
+  const base: { boardKey: string; label: string }[] = [];
   for (const l of LENGTHS) {
-    if (game === 'trivia') TIERS.forEach((t) => out.push({ boardKey: `trivia|${t}|${l.id}`, label: `${cap(t)} · ${l.label}` }));
-    if (game === 'order') ORDER_SCOPES.forEach((s) => out.push({ boardKey: `order|${s.id}|${l.id}`, label: `${s.label} · ${l.label}` }));
-    if (game === 'sort') SORT_CHALLENGES.forEach((c) => out.push({ boardKey: `sort|${c.id}|${l.id}`, label: `${c.title} · ${l.label}` }));
+    if (game === 'trivia') TIERS.forEach((t) => base.push({ boardKey: `trivia|${t}|${l.id}`, label: `${cap(t)} · ${l.id === 'full' ? 'Long' : l.label}` }));
+    if (game === 'order') ORDER_SCOPES.forEach((v) => base.push({ boardKey: `order|${v.id}|${l.id}`, label: `${v.label} · ${l.label}` }));
+    if (game === 'sort') SORT_CHALLENGES.forEach((c) => base.push({ boardKey: `sort|${c.id}|${l.id}`, label: `${c.title} · ${l.label}` }));
   }
-  return out;
+  return base.flatMap((b) => [
+    ...(['timed', 'untimed'] as const).map((mode) => ({ boardKey: `${b.boardKey}|${mode}|v2`, label: `${b.label} · ${cap(mode)}` })),
+    { ...b, label: `${b.label} · Previous rules` },
+  ]);
 }
 
 function BoardView({ explorerId, boardKey, label }: { explorerId: string; boardKey: string; label: string }) {
@@ -335,11 +317,11 @@ function BoardView({ explorerId, boardKey, label }: { explorerId: string; boardK
         </div>
       )}
       <div className="ac-wall-cols">
-        <div className="ac-wall-col">
+        {!boardKey.includes('|untimed|') && <div className="ac-wall-col">
           <div className="ac-wall-h">Clean Runs (fastest)</div>
           {board.clean.length === 0 ? <div className="ac-wall-empty">— none yet —</div> :
             board.clean.map((r, i) => <div className="ac-wall-row" key={i}><span>{i + 1}</span><span>{r.name}</span><span>{fmtTime(r.val)}</span></div>)}
-        </div>
+        </div>}
         <div className="ac-wall-col">
           <div className="ac-wall-h">High Scores</div>
           {board.scores.length === 0 ? <div className="ac-wall-empty">— none yet —</div> :
@@ -366,8 +348,8 @@ function Finish({ explorerId, defaultInitials, result, detail, onPlayAgain, onMe
 
   return (
     <div className="ac-finish">
-      <div className="ac-finish-title">{result.clean ? '🎉 Perfect round!' : '✓ Finished!'}</div>
-      <div className="ac-finish-label">{result.label}</div>
+      <div className="ac-finish-title" role="status">{result.clean ? '🎉 Perfect round!' : '✓ Finished!'}</div>
+      <div className="ac-finish-label">{result.label} · {result.timed ? 'Timed' : 'Untimed'}</div>
       <div className="ac-finish-stats">
         <div><span>Score</span><b>{result.score}</b></div>
         {result.timed && <div><span>Time</span><b>{fmtTime(result.elapsedSec)}</b></div>}
@@ -376,7 +358,7 @@ function Finish({ explorerId, defaultInitials, result, detail, onPlayAgain, onMe
 
       {outcome.scoreImproved && <div className="ac-flag">⬆ New personal best score!</div>}
       {outcome.cleanTimeImproved && <div className="ac-flag">⚡ Fastest clean run yet!</div>}
-      {outcome.newAchievements.map((a) => <div className="ac-flag badge" key={a.id}>🏅 {a.title} — {a.blurb}</div>)}
+      {outcome.newAchievements.length > 0 && <div className="ac-earned" role="status"><span className="ac-earned-seal" aria-hidden="true">✦</span><p>A new chapter in your record</p>{outcome.newAchievements.map((a) => <div className="ac-flag badge" key={a.id}><strong>{a.title}</strong><br />{a.blurb}</div>)}</div>}
 
       {isPractice && (
         <div className="ac-flag">{(detail?.corrected?.length ?? 0)} corrected · {arcade.getMisses(explorerId).length} still to review</div>

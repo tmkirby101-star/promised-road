@@ -139,3 +139,41 @@
   .ac-opts{ grid-template-columns:1fr; }
   .ac-title{ font-size:34px; }
 }
+
+/* Painted game cards and accessible setup. */
+.ac-menu{align-items:stretch;}
+.ac-gamecard{overflow:hidden;padding:0 0 22px;gap:8px;}
+.ac-game-art{display:block;width:100%;height:190px;background-image:url('/assets/arcade/game-atlas.webp');background-size:400% 100%;background-repeat:no-repeat;border-bottom:1px solid #b7954d66;margin-bottom:10px;}
+.ac-gamecard .ac-gt,.ac-gamecard .ac-gd{padding:0 16px;}
+.ac-bg h2.ac-h2{color:#f7d979;}
+.ac-setup-panel{max-width:720px;margin:0 auto;padding:24px;border:1px solid #b7954d55;border-radius:20px;background:linear-gradient(140deg,#ffffff09,#ffffff02);}
+.ac-field{display:flex;flex-direction:column;gap:10px;color:#e8d8a9;font-weight:600;margin-bottom:24px;}
+.ac-field select{width:100%;background:#211b42;color:#fff5d8;border:1px solid #78689c;border-radius:10px;padding:14px;font:inherit;}
+.ac-choice-field{border:0;padding:0;margin:0 0 24px;}
+.ac-choice-field legend{color:#e8d8a9;font-weight:600;margin-bottom:12px;}
+.ac-round-summary{text-align:center;color:#fff0c4;font-size:18px;line-height:1.5;}
+.ac-clock-note{text-align:center;color:#c9bddc;font-size:14px;line-height:1.5;}
+.ac-bg button:focus-visible,.ac-bg select:focus-visible{outline:3px solid #f7d979;outline-offset:4px;}
+.ac-current-slot{display:flex;align-items:center;justify-content:center;gap:12px;min-height:64px;padding:14px;border:1px solid #d5ad58;border-radius:14px;background:#f0c24a12;color:#fff0c4;font-size:20px;text-align:center;}
+.ac-current-slot .ac-slotnum{color:#21162e;background:#f0c24a;border-radius:50%;padding:8px;min-width:36px;}
+.ac-order-progress{display:flex;flex-direction:column;gap:8px;color:#d7cdf4;text-align:center;margin:18px 0;}
+.ac-order-progress progress{width:100%;height:8px;accent-color:#f0c24a;}
+.ac-recent{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:14px 0;color:#c9bddc;font-size:14px;}
+.ac-recent span{border:1px solid #6c5a86;padding:5px 10px;border-radius:20px;}
+.ac-pool{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;}
+.ac-pick{font-size:15px;min-height:46px;padding:10px 8px;}
+.ac-order-history{margin-top:24px;color:#c9bddc;}
+.ac-order-history summary{cursor:pointer;padding:12px;}
+.ac-order-history ol{columns:3;padding-left:30px;line-height:1.8;}
+.ac-explanation{color:#f3e6c9;text-align:left;line-height:1.6;padding:16px;background:#ffffff08;border:1px solid #86704e55;border-radius:12px;margin-top:12px;}
+.ac-explanation blockquote{margin:8px 0;font:17px/1.65 Georgia,serif;color:#ffefc5;}
+.ac-explanation a{color:#f7d979;}
+.ac-earned{position:relative;border:1px solid #d4ac57;border-radius:18px;padding:18px;margin:22px 0;background:radial-gradient(ellipse at top,#b8893233,transparent 75%);animation:ac-reward .55s ease-out;}
+.ac-earned-seal{display:block;font-size:44px;color:#f7d979;text-shadow:0 0 24px #e5b95399;}
+.ac-earned p{color:#ead3a0;font:italic 17px Georgia,serif;}
+.ac-flag.badge{background:#e4b34d12;border-color:#caa45388;color:#fff0c4;}
+@keyframes ac-reward{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.ac-earned{animation:none;}}
+@media(max-width:600px){.ac-game-art{height:150px}.ac-setup-panel{padding:18px 14px}.ac-order-history ol{columns:2}.ac-pool{grid-template-columns:repeat(2,minmax(0,1fr))}.ac-current-slot{font-size:18px;}}
+.ac-pool{max-height:clamp(240px,calc(100svh - 390px),540px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:6px 8px 12px;border-top:1px solid #6c5a8644;}
+.ac-pool:focus-within{border-top-color:#caa453;}
