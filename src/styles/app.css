@@ -407,3 +407,6 @@ body.pr-large{ font-size:18px; }
  .collection-view{padding:30px 20px 45px}.collection-view>h1{font-size:36px}.library-book,.passport-card{grid-template-columns:1fr;padding:24px;gap:28px}.library-cover{max-width:210px;width:100%;margin:auto}.passport-seal{margin:auto}
  .chapter-stages{gap:12px;font-size:10px}.chapter-stages li{gap:4px}.app-frame .bk-embed .bk-book{max-height:calc(100svh - 210px)}
 }
+
+.demo-reset{max-width:540px;margin:34px auto 0;padding:22px 26px;border:1px solid #dccca6;border-radius:14px;background:#fffcf3;text-align:center;color:#173755}
+.demo-reset h3{font:25px Georgia,serif;margin:0 0 10px}.demo-reset p{font:14px/1.65 system-ui,sans-serif;color:#657485;margin:0 0 18px}

@@ -62,6 +62,12 @@ export default function App() {
           setView('journey');
         }}
         onLeave={() => setView('landing')}
+        onFreshDemo={() => {
+          stopSpeaking();
+          store.resetChapter('ellis', 'genesis-01');
+          setExplorerId('ellis');
+          setView('chapter');
+        }}
       />
     );
   }
