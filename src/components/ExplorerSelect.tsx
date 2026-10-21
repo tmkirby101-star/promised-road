@@ -4,9 +4,11 @@ import { EXPLORERS } from '../content/explorers';
 export default function ExplorerSelect({
   onPick,
   onLeave,
+  onFreshDemo,
 }: {
   onPick: (explorerId: string) => void;
   onLeave: () => void;
+  onFreshDemo: () => void;
 }) {
   return (
     <div className="app-journey">
@@ -37,6 +39,11 @@ export default function ExplorerSelect({
             );
           })}
         </div>
+        <section className="demo-reset" aria-label="Try the first-time experience">
+          <h3>See Ellis’s first day</h3>
+          <p>Restart Ellis’s demo lesson, including his saved writing, and see Isaiah’s welcome again. Arcade scores stay saved.</p>
+          <button className="pr-primary" onClick={onFreshDemo}>Start fresh demo as Ellis</button>
+        </section>
       </div>
     </div>
   );
