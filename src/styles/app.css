@@ -354,3 +354,7 @@ body.pr-large{ font-size:18px; }
 .guide-panel .bk-next, .guide-panel .step-actions{ margin-top:4px; }
 @media(max-width:560px){ .guide-panel{ flex-direction:column; align-items:center; text-align:center; }
   .guide-portrait{ width:120px; height:150px; } }
+
+/* Entry to the arcade from the journey */
+.arcade-link{ margin-top:14px; display:inline-flex; align-items:center; gap:8px; background:linear-gradient(180deg,#241c52,#19123a); border:2px solid #4a3f85; color:#f3eeff; border-radius:12px; padding:10px 20px; font-size:15px; font-weight:600; cursor:pointer; transition:all .18s; }
+.arcade-link:hover{ border-color:#f0c24a; transform:translateY(-2px); box-shadow:0 10px 24px rgba(20,15,48,.4); }

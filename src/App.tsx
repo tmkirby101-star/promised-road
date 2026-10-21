@@ -5,11 +5,12 @@ import EntryPanel from './components/EntryPanel';
 import ExplorerSelect from './components/ExplorerSelect';
 import JourneyView from './components/JourneyView';
 import ChapterFlow from './components/chapter/ChapterFlow';
+import Arcade from './components/arcade/Arcade';
 import ParentView from './components/ParentView';
 import BrandDialog, { type InfoKind } from './components/BrandDialog';
 import { useStore } from './lib/store';
 
-type View = 'landing' | 'explorers' | 'journey' | 'chapter' | 'parent';
+type View = 'landing' | 'explorers' | 'journey' | 'chapter' | 'arcade' | 'parent';
 
 // Remember where the child was so a reload resumes instead of dropping to the landing.
 const NAV_KEY = 'promised-road:nav:v1';
@@ -66,10 +67,14 @@ export default function App() {
       <JourneyView
         explorerId={explorerId}
         onBegin={() => setView('chapter')}
+        onArcade={() => setView('arcade')}
         onLeave={() => setView('explorers')}
         onParent={() => openParent('journey')}
       />
     );
+  }
+  if (view === 'arcade' && explorerId) {
+    return <Arcade explorerId={explorerId} onExit={() => setView('journey')} />;
   }
   if (view === 'chapter' && explorerId) {
     return (

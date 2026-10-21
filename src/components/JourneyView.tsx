@@ -15,11 +15,13 @@ const STOPS: { title: string; pos: [number, number]; ready: boolean }[] = [
 export default function JourneyView({
   explorerId,
   onBegin,
+  onArcade,
   onLeave,
   onParent,
 }: {
   explorerId: string;
   onBegin: () => void;
+  onArcade: () => void;
   onLeave: () => void;
   onParent: () => void;
 }) {
@@ -43,6 +45,7 @@ export default function JourneyView({
             <span className="kicker">GENESIS · AREA ONE · {explorer?.name?.toUpperCase()}</span>
             <h2>In the Beginning</h2>
             <p>A good world. A sacred calling. The beginning of the promised road.</p>
+            <button className="arcade-link" onClick={onArcade}>🕹️ The Arcade — games &amp; Wall of Fame</button>
           </div>
 
           <div className="journey-scene">

@@ -6,12 +6,14 @@ export default function InnerBar({
   onLeave,
   onParent,
   showParent = true,
+  showAccess = true,
   leaveLabel = 'Leave',
 }: {
   explorerId: string | null;
   onLeave: () => void;
   onParent?: () => void;
   showParent?: boolean;
+  showAccess?: boolean;
   leaveLabel?: string;
 }) {
   const store = useStore();
@@ -21,7 +23,7 @@ export default function InnerBar({
     <header className="inner-bar">
       <img src="/assets/wordmark.webp" alt="The Promised Road" />
       <div className="bar-actions">
-        {explorerId && (
+        {explorerId && showAccess && (
           <>
             <button
               aria-pressed={access.narration}
