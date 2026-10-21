@@ -23,7 +23,7 @@ for name,book,sun in [('lockup',NAVY,GOLD),('lockup-gold',GOLD,GOLD)]:
     content=f'<g transform="translate(4 12) scale(.64)">{emblem(book,sun)}</g><g fill="{book}" font-family="Georgia, Times New Roman, serif" font-weight="700"><text x="246" y="42" font-size="26" letter-spacing="5">THE</text><text x="242" y="94" font-size="52" letter-spacing="-1">PROMISED</text><text x="242" y="148" font-size="52" letter-spacing="-1">ROAD</text></g>'
     (OUT/f'{name}.svg').write_text(svg(content,'0 0 620 166',620,166))
 # Browser tabs use a simpler one-color sun (no fine rays), on a navy tile for visibility in both browser themes.
-icon=f'<rect width="64" height="64" rx="13" fill="{NAVY}"/><g transform="translate(5 8) scale(.169)">{emblem(GOLD,GOLD,True)}</g>'
+icon=f'<rect width="64" height="64" rx="13" fill="{NAVY}"/><g transform="translate(5 8) scale(.169)">{emblem(PAPER,PAPER,True)}</g>'
 (ROOT/'public/favicon.svg').write_text(svg(icon,'0 0 64 64',64,64))
 app=f'<rect width="512" height="512" rx="100" fill="{NAVY}"/><g transform="translate(48 97) scale(1.3)">{emblem(GOLD,GOLD)}</g>'
 (OUT/'app-icon.svg').write_text(svg(app,'0 0 512 512',512,512))

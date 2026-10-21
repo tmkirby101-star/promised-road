@@ -8,7 +8,12 @@ export default function SceneCarousel() {
   const [paused, setPaused] = useState(false);
   const timer = useRef<number | undefined>(undefined);
 
-  const scene = BIBLE_SCENES[index];
+  const [ready, setReady] = useState<number[]>([]);
+  const [displayed, setDisplayed] = useState(0);
+  useEffect(() => {
+    if (ready.includes(index)) setDisplayed(index);
+  }, [index, ready]);
+  const scene = BIBLE_SCENES[displayed];
 
   const schedule = useCallback(() => {
     window.clearInterval(timer.current);
@@ -37,12 +42,26 @@ export default function SceneCarousel() {
       aria-label="Epic moments from the Bible"
     >
       <div id="sceneSlides" className="scene-slides">
-        <img
-          id="sceneImage"
-          src={scene.image}
-          alt={scene.alt}
-          style={{ objectPosition: scene.position ?? 'center' }}
-        />
+        {BIBLE_SCENES.map((s, i) => (
+          <img
+            key={s.image}
+            src={s.image}
+            alt={i === displayed ? s.alt : ''}
+            aria-hidden={i !== displayed}
+            loading="eager"
+            onLoad={(event) => {
+              const image = event.currentTarget;
+              void image.decode().then(() => {
+                setReady((previous) => previous.includes(i) ? previous : [...previous, i]);
+              }).catch(() => { /* Keep the current scene if this image cannot decode. */ });
+            }}
+            style={{
+              position: 'absolute', inset: 0,
+              objectPosition: s.position ?? 'center',
+              visibility: i === displayed && ready.includes(i) ? 'visible' : 'hidden',
+            }}
+          />
+        ))}
       </div>
       <div className="scene-shade" />
       <div className="scene-caption" aria-live="off">
