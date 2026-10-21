@@ -1,3 +1,4 @@
+import BrandMark from './BrandMark';
 import { useEffect, useRef, useState } from 'react';
 
 // The honest account status. Shown before any credential field, and again inside
@@ -36,9 +37,7 @@ export default function EntryPanel({
 
   return (
     <div className="panel" id="panel" ref={panelRef}>
-      <svg className="smallmark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M4 20c4-2 12-2 16 0M6 4c3 1.5 9 1.5 12 0v13c-3 1.5-9 1.5-12 0z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-      </svg>
+      <BrandMark tone="onLight" size={44} className="smallmark" title="" />
       <span className="kicker">START HERE · EARLY ACCESS</span>
       <h2>Jump in and look around.</h2>
       <p>The demo is open — no account, no sign-in needed.</p>

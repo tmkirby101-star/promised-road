@@ -12,7 +12,7 @@ export default function Masthead({
       <div className="brand-lockup">
         <img
           className="brand-wordmark"
-          src="/assets/wordmark.webp"
+          src="/assets/brand/lockup.svg"
           alt="The Promised Road — A Bible Adventure"
           width={330}
           height={110}

@@ -21,7 +21,7 @@ export default function InnerBar({
 
   return (
     <header className="inner-bar">
-      <img src="/assets/wordmark.webp" alt="The Promised Road" />
+      <img src="/assets/brand/lockup.svg" alt="The Promised Road" />
       <div className="bar-actions">
         {explorerId && showAccess && (
           <>

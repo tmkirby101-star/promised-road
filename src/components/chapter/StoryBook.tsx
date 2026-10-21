@@ -1,3 +1,4 @@
+import BrandMark from '../BrandMark';
 import { useEffect, useState } from 'react';
 import { SPREADS, type Spread } from '../../prototype/creationSpreads';
 import { useStore } from '../../lib/store';
@@ -126,7 +127,7 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
     <div className={rootClass}>
       <div className="bk-stage">
         <div className={`bk-book${mountedArtwork.length < SPREADS.length ? ' preparing' : ''}`} aria-busy={mountedArtwork.length < SPREADS.length}>
-          {mountedArtwork.length < SPREADS.length && <div className="book-loading-message" role="status"><p>{art.failed || artworkFailed ? 'The illustrations could not load.' : 'Preparing your illustrated book…'}</p>{(art.failed || artworkFailed) && <button className="pr-secondary" onClick={() => window.location.reload()}>Try again</button>}</div>}
+          {mountedArtwork.length < SPREADS.length && <div className="book-loading-message" role="status"><BrandMark tone="onLight" size={64} title="" /><p>{art.failed || artworkFailed ? 'The illustrations could not load.' : 'Preparing your illustrated book…'}</p>{(art.failed || artworkFailed) && <button className="pr-secondary" onClick={() => window.location.reload()}>Try again</button>}</div>}
           <span className="bk-ribbon" title={`Day ${spreadIndex + 1}`} />
           <div className="bk-page left" hidden={single && face % 2 === 1}>
             <div className="bk-face">

@@ -459,3 +459,10 @@ body.pr-large{ font-size:18px; }
 .nav-guard-btns .primary{ background:#b88a44; border:none; color:#fff; border-radius:11px; padding:12px 24px; font-size:15px; font-weight:600; cursor:pointer; }
 .nav-guard-btns .ghost{ background:transparent; border:1px solid #cdd3c6; color:#717c72; border-radius:11px; padding:12px 20px; font-size:15px; cursor:pointer; }
 .nav-guard-btns .ghost:hover{ border-color:#b88a44; color:#1d403d; }
+
+/* Approved compact identity: the same broad book/road master in every location. */
+.brand-symbol{display:block;object-fit:contain;flex-shrink:0}
+.rail-brand .brand-symbol{width:60px;height:44px}
+.brand-lockup .brand-wordmark{box-shadow:none;background:transparent;padding:0}
+.inner-bar>img{height:46px;max-width:42vw;object-fit:contain}
+.guide-loading-message .brand-symbol,.book-loading-message .brand-symbol{margin-bottom:8px}
