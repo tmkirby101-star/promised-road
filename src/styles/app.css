@@ -466,3 +466,22 @@ body.pr-large{ font-size:18px; }
 .brand-lockup .brand-wordmark{box-shadow:none;background:transparent;padding:0}
 .inner-bar>img{height:46px;max-width:42vw;object-fit:contain}
 .guide-loading-message .brand-symbol,.book-loading-message .brand-symbol{margin-bottom:8px}
+
+/* Landing-page reading scale: give the demo the same presence as its artwork. */
+body:not(.in-dashboard) .entry #panel{
+  width:100%;max-width:500px;min-width:0;
+}
+body:not(.in-dashboard) .entry #panel>p{
+  font-size:18px;line-height:1.55;color:#40546a;
+}
+#panel .primary-cta>.primary{
+  font-size:18px;font-weight:600;line-height:1.4;
+}
+#panel .guest-note{
+  font-size:15px;line-height:1.6;color:#40546a;
+}
+#panel .accounts-preview>.fine,
+#panel .preview-toggle{
+  font-size:15px;line-height:1.5;color:#40546a;
+}
+.home-nav button{font-size:16px}
