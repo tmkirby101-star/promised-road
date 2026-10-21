@@ -420,3 +420,12 @@ body.pr-large{ font-size:18px; }
 .welcome-title{font:25px Georgia,serif;color:#173755;margin:12px 0}.welcome-count{font:11px system-ui;color:#84692f;letter-spacing:1px}
 .welcome-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}.welcome-skip{background:none;border:0;color:#5c6e7d;font:12px system-ui;padding:10px;cursor:pointer}
 @media(max-width:700px){.app-frame .bk-embed:not(.single) .bk-book{height:calc(100svh - 210px)}.guide-panel.artwork-loading{min-height:360px}}
+
+.app-frame .bk-book .bk-face{animation:none}
+.bk-book .bk-page[hidden]{display:none}
+.bk-book.preparing>.bk-page,.bk-book.preparing>.bk-crease,.bk-book.preparing>.bk-ribbon{visibility:hidden}
+.book-loading-message{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#173755;text-align:center;padding:24px;z-index:8}
+
+.bk-book.preparing .bk-illus img{visibility:hidden!important}
+.guide-panel{position:relative}.guide-panel.preparing>.guide-portrait,.guide-panel.preparing>.guide-body{visibility:hidden}
+.guide-loading-message{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#173755;padding:24px;text-align:center}

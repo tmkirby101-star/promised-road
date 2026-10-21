@@ -40,6 +40,8 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
   const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 820px)').matches);
   const art = useArtwork(SPREADS.map((spread) => spread.img));
   const [welcomePage, setWelcomePage] = useState(0);
+  const [artworkFailed, setArtworkFailed] = useState(false);
+  const [mountedArtwork, setMountedArtwork] = useState<string[]>([]);
   // Isaiah welcomes the child on first entry; a resume or a replay goes straight to reading.
   const [phase, setPhase] = useState<'welcome' | 'reading' | 'bridge'>(() => {
     const rec = store.getChapter(explorerId, CHID);
@@ -89,9 +91,9 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
         <div className="bk-stage">
           <IsaiahGuide
             pose="welcoming"
+            title={WELCOME[welcomePage].title}
             line={WELCOME[welcomePage].line}
           >
-            <h2 className="welcome-title">{WELCOME[welcomePage].title}</h2>
             <p className="welcome-count">Welcome · {welcomePage + 1} of {WELCOME.length}</p>
             <button className="bk-readaloud" onClick={() => speak(WELCOME[welcomePage].line)}>Read this to me</button>
             <div className="welcome-actions">
@@ -104,11 +106,6 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
       </div>
     );
   }
-
-  if (phase === 'reading' && !art.ready) return <div className="bk-root bk-embed"><div className="bk-stage"><div className="bk-book artwork-loading" role="status" aria-live="polite">
-    <p>{art.failed ? 'The illustrations could not load. Please try again.' : 'Preparing your illustrated book…'}</p>
-    {art.failed && <button className="pr-secondary" onClick={art.retry}>Try again</button>}
-  </div></div></div>;
 
   if (phase === 'bridge') {
     return (
@@ -129,37 +126,29 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
   return (
     <div className={rootClass}>
       <div className="bk-stage">
-        <div className="bk-book">
+        <div className={`bk-book${mountedArtwork.length < SPREADS.length ? ' preparing' : ''}`} aria-busy={mountedArtwork.length < SPREADS.length}>
+          {mountedArtwork.length < SPREADS.length && <div className="book-loading-message" role="status"><p>{art.failed || artworkFailed ? 'The illustrations could not load.' : 'Preparing your illustrated book…'}</p>{(art.failed || artworkFailed) && <button className="pr-secondary" onClick={() => window.location.reload()}>Try again</button>}</div>}
           <span className="bk-ribbon" title={`Day ${spreadIndex + 1}`} />
-          {single ? (
-            face % 2 === 0 ? (
-              <div className="bk-page left">
-                <div className="bk-face" key={`i${face}`}>
-                  <div className="bk-illus"><img src={sp.img} width="1600" height="1200" alt={sp.alt} /></div>
-                </div>
-              </div>
-            ) : (
-              <div className="bk-page right"><TextFace sp={sp} k={`t${face}`} /></div>
-            )
-          ) : (
-            <>
-              <div className="bk-page left">
-                <div className="bk-face" key={`l${spreadIndex}`}>
-                  <div className="bk-illus"><img src={sp.img} width="1600" height="1200" alt={sp.alt} /></div>
-                </div>
-              </div>
-              <span className="bk-crease" />
-              <div className="bk-page right"><TextFace sp={sp} k={`r${spreadIndex}`} /></div>
-            </>
-          )}
+          <div className="bk-page left" hidden={single && face % 2 === 1}>
+            <div className="bk-face">
+              <div className="bk-illus">{SPREADS.map((spread, index) => <img key={spread.key} src={spread.img} width="1600" height="1200"
+                alt={index === spreadIndex ? spread.alt : ''} aria-hidden={index !== spreadIndex}
+                style={{ visibility: index === spreadIndex ? 'visible' : 'hidden' }}
+                onLoad={(event) => { const img = event.currentTarget; void img.decode().then(() => setMountedArtwork((ready) => ready.includes(spread.key) ? ready : [...ready, spread.key])).catch(() => setArtworkFailed(true)); }}
+                onError={() => setArtworkFailed(true)}
+              />)}</div>
+            </div>
+          </div>
+          {!single && <span className="bk-crease" />}
+          <div className="bk-page right" hidden={single && face % 2 === 0}><TextFace sp={sp} k={`r${spreadIndex}`} /></div>
         </div>
       </div>
       <div className="bk-nav">
-        <button onClick={prev} disabled={face === 0}>‹ Back</button>
+        <button onClick={prev} disabled={face === 0 || mountedArtwork.length < SPREADS.length}>‹ Back</button>
         <span className="bk-page-count">
           {single ? `Page ${face + 1} of ${TOTAL_FACES}` : `Day ${spreadIndex + 1} of ${SPREADS.length}`}
         </span>
-        <button onClick={next}>{atLast ? 'Finish the story ›' : 'Turn the page ›'}</button>
+        <button onClick={next} disabled={mountedArtwork.length < SPREADS.length}>{atLast ? 'Finish the story ›' : 'Turn the page ›'}</button>
       </div>
     </div>
   );
