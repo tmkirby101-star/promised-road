@@ -86,7 +86,7 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
 
   if (phase === 'welcome') {
     return (
-      <div className="bk-root bk-embed">
+      <div className="bk-root bk-embed bk-welcome">
         <div className="bk-stage">
           <IsaiahGuide
             pose="welcoming"

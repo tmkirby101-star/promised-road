@@ -429,3 +429,13 @@ body.pr-large{ font-size:18px; }
 .bk-book.preparing .bk-illus img{visibility:hidden!important}
 .guide-panel{position:relative}.guide-panel.preparing>.guide-portrait,.guide-panel.preparing>.guide-body{visibility:hidden}
 .guide-loading-message{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#173755;padding:24px;text-align:center}
+
+/* The first welcome is a full introduction, larger than a between-activity note. */
+.bk-root.bk-welcome{min-height:calc(100svh - 110px)}
+.bk-welcome .bk-stage{flex:1;padding:24px 12px 40px}
+.guide-panel.guide-welcome{width:min(1100px,100%);min-height:clamp(420px,64svh,680px);padding:40px 48px;gap:36px;align-items:center}
+.guide-welcome .guide-portrait{width:clamp(210px,25vw,330px);height:380px;max-width:36%;object-fit:contain;align-self:flex-end}
+.guide-welcome .welcome-title{font-size:clamp(30px,3vw,42px);line-height:1.15;margin:14px 0 22px}
+.guide-welcome .guide-say{font-size:clamp(22px,2vw,27px);line-height:1.6;max-width:28em}
+.guide-welcome .welcome-actions{margin-top:24px}.guide-welcome .pr-primary{font-size:18px;padding:15px 30px}
+@media(max-width:700px){.bk-welcome .bk-stage{padding:12px 4px 24px}.guide-panel.guide-welcome{padding:24px;gap:16px;min-height:0;flex-direction:column;text-align:center}.guide-welcome .guide-portrait{width:170px;height:210px;max-width:100%;align-self:center}.guide-welcome .welcome-title{font-size:29px;margin:10px 0 14px}.guide-welcome .guide-say{font-size:21px}.guide-welcome .welcome-actions{justify-content:center}}
