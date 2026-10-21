@@ -120,11 +120,11 @@ export default function ChapterFlow({
             <span className="chap-passage">{CH.passage}</span>
           </div>
         )}
-        <div className="progress-row" aria-hidden="true">
+        <ol className="chapter-stages" aria-label="Chapter progress">
           {steps.map((s, i) => (
-            <span key={s} className={i <= stepIndex ? 'on' : ''} />
+            <li key={s} aria-current={i === stepIndex ? 'step' : undefined} className={i <= stepIndex ? 'on' : ''}><span>{i + 1}</span>{['Story', 'Explore', 'Respond', 'Finish'][i]}</li>
           ))}
-        </div>
+        </ol>
         {body}
       </div>
     </div>

@@ -358,3 +358,52 @@ body.pr-large{ font-size:18px; }
 /* Entry to the arcade from the journey */
 .arcade-link{ margin-top:14px; display:inline-flex; align-items:center; gap:8px; background:linear-gradient(180deg,#241c52,#19123a); border:2px solid #4a3f85; color:#f3eeff; border-radius:12px; padding:10px 20px; font-size:15px; font-weight:600; cursor:pointer; transition:all .18s; }
 .arcade-link:hover{ border-color:#f0c24a; transform:translateY(-2px); box-shadow:0 10px 24px rgba(20,15,48,.4); }
+
+/* Persistent explorer navigation. */
+.app-frame{--rail-width:88px;padding-left:var(--rail-width);min-height:100svh;background:#f8f5ec}
+.app-content{min-width:0}
+.app-frame .inner-bar{display:none}
+.app-rail{position:fixed;inset:0 auto 0 0;width:var(--rail-width);z-index:100;background:linear-gradient(180deg,#102e4c,#091f36);border-right:1px solid #b68d4540;display:flex;align-items:center;flex-direction:column;color:#e9d3a2;padding:24px 8px 16px}
+.app-rail button{cursor:pointer;font:inherit}
+.rail-brand{border:0;background:none;color:#e6c278;font:29px Georgia,serif!important;letter-spacing:2px;width:100%;padding:0 0 24px}
+.rail-brand>span{display:block;font:6px/1.6 system-ui;letter-spacing:1px;margin-top:5px}
+.app-rail nav{width:100%;display:grid;gap:10px}
+.app-rail nav button{position:relative;display:flex;align-items:center;flex-direction:column;gap:7px;width:100%;border:1px solid transparent;border-radius:10px;background:none;color:#c8bc9e;padding:12px 0;font-size:11px}
+.app-rail nav svg{width:27px;height:27px;color:#d6b77a}
+.app-rail nav button:hover,.app-rail nav button[aria-current]{background:#ffffff0e;border-color:#b78e4945;color:#fff3d6}
+.app-rail nav button[aria-current]:before{content:'';position:absolute;left:-9px;top:13px;bottom:13px;width:3px;border-radius:3px;background:#e6bf72}
+.app-rail button:focus-visible{outline:2px solid #f1cb7d;outline-offset:2px}
+.rail-profile{margin-top:auto;background:none;border:0;color:#f0e5cc;display:grid;justify-items:center;gap:9px;font-size:11px!important;padding:12px 0 0;width:100%}
+.rail-avatar{display:grid;place-items:center;width:40px;height:40px;border:1px solid #d6b77a;border-radius:50%;background:#244b6b;color:#f5dfaa;font:23px Georgia,serif}
+.rail-profile small{display:block;font-size:9px;color:#a9b4c0;margin-top:4px}
+.rail-menu{position:absolute;left:calc(100% + 12px);bottom:16px;width:260px;padding:20px;border-radius:14px;background:#fffcf3;color:#173755;border:1px solid #d6bd88;box-shadow:0 18px 60px #06182f60}
+.rail-menu h2{font:23px Georgia,serif;margin:0 0 14px}
+.rail-menu button{display:flex;justify-content:space-between;width:100%;text-align:left;padding:12px 8px;border:0;border-top:1px solid #e7ddc9;background:none;color:#173755;font-size:14px}
+.rail-menu button:hover{background:#f3ead6}.rail-menu button span{color:#826022}
+.rail-scrim{position:fixed;inset:0;z-index:99;border:0;background:#05182f45}
+.app-frame .journey-wrap{padding-top:38px}
+.app-frame .journey-heading{margin-bottom:24px}
+.chapter-stages{list-style:none;display:flex;justify-content:center;gap:24px;margin:12px 0 18px;padding:0;color:#9eafbf;font-size:11px}
+.chapter-stages li{display:flex;align-items:center;gap:7px}.chapter-stages li>span{display:grid;place-items:center;width:21px;height:21px;border:1px solid #5b6f83;border-radius:50%;font-size:10px}
+.chapter-stages li.on{color:#e8cc91}.chapter-stages li[aria-current]{color:#fff2d0}.chapter-stages li.on>span{background:#b5893f;border-color:#b5893f;color:#102f50}
+.app-frame .bk-embed .bk-book{max-width:100%;width:min(1200px,100%,calc((100svh - 130px)*1.416));max-height:calc(100svh - 130px)}
+.app-frame .bk-nav,.app-frame .bk-act,.app-frame .bk-done,.app-frame .guide-panel{max-width:100%}
+.collection-view{max-width:1050px;margin:auto;padding:62px 40px 80px;color:#173755}
+.collection-kicker{font:600 10px system-ui;letter-spacing:2px;color:#947137}
+.collection-view>h1{font:46px Georgia,serif;margin:12px 0}.collection-view>p{color:#657485;margin-bottom:36px}
+.library-book,.passport-card{display:grid;grid-template-columns:240px 1fr;gap:38px;align-items:center;padding:30px;border:1px solid #dfd2b3;border-radius:16px;background:#fffcf3;box-shadow:0 12px 35px #1737550a}
+.library-cover{aspect-ratio:3/4;background:radial-gradient(ellipse at top,#355c7d,#102e4c 80%);color:#ecd19a;border:1px solid #c19a57;outline:4px solid #102e4c;border-radius:3px 12px 12px 3px;box-shadow:6px 8px 0 #ded3b8;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.library-cover h2{font:42px Georgia,serif;margin:24px 0}.library-cover span{font:9px system-ui;letter-spacing:2px}
+.collection-view h2{font:29px Georgia,serif}.collection-view p{line-height:1.7}.collection-note{font-size:12px;color:#687782;margin-top:24px}
+.passport-card{grid-template-columns:150px 1fr}.passport-seal{width:132px;height:132px;display:grid;place-items:center;border:2px dashed #a99875;border-radius:50%;font:38px Georgia,serif;color:#9b8d71;background:#f4edde}.passport-seal.earned{border:3px double #ac8133;color:#9d742d;background:#f7e8bd;font-size:64px}
+.passport-badges{margin-top:36px}.passport-badge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}.passport-badge-grid article{border:1px solid #dfd2b3;border-radius:12px;padding:20px;background:#fffcf3}.passport-badge-grid article>span{color:#b5893f;font-size:25px}.passport-badge-grid h3{font:21px Georgia,serif}.passport-badge-grid p{font-size:13px}
+@media(max-width:700px){
+ .app-frame{--rail-width:0px;padding-left:0;padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+ .app-frame .app-journey{min-height:calc(100svh - 74px)}
+ .app-rail{inset:auto 0 0;width:100%;height:calc(70px + env(safe-area-inset-bottom));padding:5px 6px calc(5px + env(safe-area-inset-bottom));flex-direction:row;border-top:1px solid #b68d4540}
+ .rail-brand{display:none}.app-rail nav{display:flex;gap:2px;flex:1}.app-rail nav button{padding:6px 2px;gap:3px;font-size:10px}.app-rail nav svg{width:23px;height:23px}.app-rail nav button[aria-current]:before{left:20%;right:20%;top:auto;bottom:-3px;height:2px;width:auto}
+ .rail-profile{margin:0;width:62px;gap:2px;padding:0;font-size:10px!important}.rail-avatar{width:27px;height:27px;font-size:18px}.rail-profile small{display:none}
+ .rail-menu{left:auto;right:8px;bottom:calc(100% + 8px);max-width:calc(100vw - 16px)}
+ .collection-view{padding:30px 20px 45px}.collection-view>h1{font-size:36px}.library-book,.passport-card{grid-template-columns:1fr;padding:24px;gap:28px}.library-cover{max-width:210px;width:100%;margin:auto}.passport-seal{margin:auto}
+ .chapter-stages{gap:12px;font-size:10px}.chapter-stages li{gap:4px}.app-frame .bk-embed .bk-book{max-height:calc(100svh - 210px)}
+}

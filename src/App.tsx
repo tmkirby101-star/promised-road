@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import AppRail from './components/AppRail';
+import CollectionView from './components/CollectionView';
+import { stopSpeaking } from './lib/speak';
 import Masthead from './components/Masthead';
 import SceneCarousel from './components/SceneCarousel';
 import EntryPanel from './components/EntryPanel';
@@ -10,7 +13,7 @@ import ParentView from './components/ParentView';
 import BrandDialog, { type InfoKind } from './components/BrandDialog';
 import { useStore } from './lib/store';
 
-type View = 'landing' | 'explorers' | 'journey' | 'chapter' | 'arcade' | 'parent';
+type View = 'landing' | 'explorers' | 'journey' | 'chapter' | 'arcade' | 'parent' | 'books' | 'passport';
 
 // Remember where the child was so a reload resumes instead of dropping to the landing.
 const NAV_KEY = 'promised-road:nav:v1';
@@ -62,37 +65,18 @@ export default function App() {
       />
     );
   }
-  if (view === 'journey' && explorerId) {
-    return (
-      <JourneyView
-        explorerId={explorerId}
-        onBegin={() => setView('chapter')}
-        onArcade={() => setView('arcade')}
-        onLeave={() => setView('explorers')}
-        onParent={() => openParent('journey')}
-      />
-    );
-  }
-  if (view === 'arcade' && explorerId) {
-    return <Arcade explorerId={explorerId} onExit={() => setView('journey')} />;
-  }
-  if (view === 'chapter' && explorerId) {
-    return (
-      <ChapterFlow
-        explorerId={explorerId}
-        onLeave={() => setView('journey')}
-        onParent={() => openParent('chapter')}
-      />
-    );
-  }
-  if (view === 'parent' && explorerId) {
-    return (
-      <ParentView
-        explorerId={explorerId}
-        onLeave={() => setView('landing')}
-        onBack={() => setView(parentOrigin)}
-      />
-    );
+  if (explorerId && ['journey', 'chapter', 'arcade', 'parent', 'books', 'passport'].includes(view)) {
+    const navigate = (next: View) => { stopSpeaking(); setView(next); };
+    let page;
+    if (view === 'journey') page = <JourneyView explorerId={explorerId} onBegin={() => navigate('chapter')} onLeave={() => navigate('explorers')} onParent={() => openParent('journey')} />;
+    else if (view === 'arcade') page = <Arcade explorerId={explorerId} onExit={() => navigate('journey')} />;
+    else if (view === 'books' || view === 'passport') page = <CollectionView explorerId={explorerId} passport={view === 'passport'} onBegin={() => navigate('chapter')} />;
+    else if (view === 'chapter') page = <ChapterFlow explorerId={explorerId} onLeave={() => navigate('journey')} onParent={() => openParent('chapter')} />;
+    else page = <ParentView explorerId={explorerId} onLeave={() => navigate('landing')} onBack={() => navigate(parentOrigin)} />;
+    return <div className={`app-frame${view === 'chapter' ? ' in-chapter' : ''}`}>
+      <AppRail explorerId={explorerId} active={view === 'chapter' ? 'journey' : view === 'parent' ? null : view as 'journey' | 'arcade' | 'books' | 'passport'} onNavigate={navigate} onSwitch={() => navigate('explorers')} onParent={() => openParent(view === 'chapter' ? 'chapter' : 'journey')} />
+      <div className="app-content">{page}</div>
+    </div>;
   }
 
   return (
