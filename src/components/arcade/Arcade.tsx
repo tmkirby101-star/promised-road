@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import InnerBar from '../InnerBar';
 import { BOOKS_DIV, divLabel, orderableDivs, allBooksFlat } from '../../content/arcadeBooks';
 import { TRIVIA, type TriviaTier } from '../../content/arcadeTrivia';
@@ -53,7 +53,7 @@ type View =
   | { s: 'wallGame'; game: 'trivia' | 'order' | 'sort' }
   | { s: 'wallBoard'; boardKey: string; label: string; backGame: 'trivia' | 'order' | 'sort' };
 
-export default function Arcade({ explorerId, onExit }: { explorerId: string; onExit: () => void }) {
+export default function Arcade({ explorerId, onExit, onActiveChange }: { explorerId: string; onExit: () => void; onActiveChange?: (active: boolean) => void }) {
   const explorer = explorerById(explorerId);
   const defaultInitials = (explorer?.name ?? 'YOU').toUpperCase().slice(0, 3);
 
@@ -66,6 +66,18 @@ export default function Arcade({ explorerId, onExit }: { explorerId: string; onE
   const [nonce, setNonce] = useState(1);
 
   const misses = arcade.getMisses(explorerId);
+
+  // R3: a round is "live" only while actually playing. Report it up so the app can
+  // guard navigation away, and warn before a reload/tab-close drops the round.
+  const inRound = view.s === 'play';
+  useEffect(() => {
+    onActiveChange?.(inRound);
+    if (!inRound) return;
+    const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [inRound, onActiveChange]);
+  useEffect(() => () => { onActiveChange?.(false); }, [onActiveChange]);
 
   const startPlay = (play: Play) => {
     setNonce((n) => n + 1);

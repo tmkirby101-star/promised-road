@@ -8,7 +8,7 @@ verified*, mapped by ID so it stays valid across rewrites.
 Per item: **status · commit · what changed · how it was checked.**
 Status values: `FIXED` (implemented + verified), `PARTIAL`, `OPEN`, `WONTFIX`, `TEST`.
 
-_Last updated: 2026-10-21._
+_Last updated: 2026-10-21 (after live review revision 2)._
 
 ## Reliability & honest entry (P1)
 
@@ -26,8 +26,11 @@ _Last updated: 2026-10-21._
 - **Verified:** Headless run with `Storage.prototype.setItem` throwing — finish screen
   shows the warning, Save shows "Not saved on this device", and no false "Saved"
   message appears. Idempotent retry confirmed by `runId` de-dupe in `addToBoard`.
-- **Acceptance remaining:** independent quota-vs-blocked simulation for personal best
-  and misses specifically (currently covered together via the shared storage path).
+  Live review rev-2 also confirmed the normal save path (a 40-pt Gospels result saved
+  to its exact untimed board).
+- **Acceptance remaining:** an independent reviewer's quota-vs-blocked simulation for
+  personal best and misses specifically (our headless injection covers the shared
+  storage path; rev-2 did not inject failure).
 
 ### R2 — Landing prioritized placeholder account forms — `FIXED` (2026-10-21)
 - **Commit:** _(this change)_
@@ -44,10 +47,21 @@ _Last updated: 2026-10-21._
 - **Follow-up (minor):** masthead button still reads "Sign in"; it now routes to the
   labeled preview, but could be relabeled "Early access" for extra clarity.
 
-### R3 — In-progress arcade rounds easy to abandon — `OPEN` (P1, batch 2)
-Rail navigation unmounts a live round with no confirm/resume; reload loses it. Decide
-confirm-discard vs. checkpoint-resume (resume must not regain first-try status or reset
-the clock). Pairs with R6.
+### R3 — In-progress arcade rounds easy to abandon — `FIXED` (2026-10-21, confirm-on-exit)
+- **Commit:** _(this change)_
+- **What changed:** A navigation guard. While a round is actually being played,
+  `Arcade` reports `onActiveChange(true)` to `App`; any attempt to leave (rail
+  destination, "Leave arcade", or a browser reload/tab-close) is intercepted. Rail /
+  Leave-arcade shows a **"Leave this game?"** dialog with **Stay in the game** /
+  **Leave game** (Escape = Stay); reload/close triggers the browser's own
+  beforeunload prompt. The explicit **Quit game** button remains an intentional
+  immediate exit. Loss is now always explicit — never silent.
+- **Verified:** Headless — guard appears on rail navigation; Stay keeps the round
+  intact; Leave exits to Journey; a live question is present throughout.
+- **Follow-up (optional, richer):** checkpoint-resume — persist the active round
+  (config, attempts, remaining items, elapsed active time) so it can be *resumed*
+  rather than only confirmed-discarded. Must not restore first-try status or shorten
+  the clock. Not built; the confirm-on-exit guard fully resolves the silent-loss defect.
 
 ## Navigation & accessibility (P2)
 

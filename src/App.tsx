@@ -40,6 +40,10 @@ export default function App() {
   const [parentOrigin, setParentOrigin] = useState<'journey' | 'chapter'>('journey');
   const [info, setInfo] = useState<InfoKind>(null);
   const [focusSignal, setFocusSignal] = useState(0);
+  // R3: while an arcade round is live, intercept navigation away so it can't be
+  // silently discarded. `pendingNav` holds the destination awaiting confirmation.
+  const [arcadeActive, setArcadeActive] = useState(false);
+  const [pendingNav, setPendingNav] = useState<View | null>(null);
 
   useEffect(() => {
     try {
@@ -78,16 +82,38 @@ export default function App() {
     );
   }
   if (explorerId && ['journey', 'chapter', 'arcade', 'parent', 'books', 'passport'].includes(view)) {
-    const navigate = (next: View) => { stopSpeaking(); setView(next); };
+    const navigate = (next: View) => {
+      if (arcadeActive && next !== 'arcade') { setPendingNav(next); return; } // guard a live round
+      stopSpeaking();
+      setView(next);
+    };
+    const leaveGame = () => {
+      const t = pendingNav;
+      setArcadeActive(false);
+      setPendingNav(null);
+      if (t) { stopSpeaking(); setView(t); }
+    };
     let page;
     if (view === 'journey') page = <JourneyView explorerId={explorerId} onBegin={() => navigate('chapter')} onLeave={() => navigate('explorers')} onParent={() => openParent('journey')} />;
-    else if (view === 'arcade') page = <Arcade explorerId={explorerId} onExit={() => navigate('journey')} />;
+    else if (view === 'arcade') page = <Arcade explorerId={explorerId} onExit={() => navigate('journey')} onActiveChange={setArcadeActive} />;
     else if (view === 'books' || view === 'passport') page = <CollectionView explorerId={explorerId} passport={view === 'passport'} onBegin={() => navigate('chapter')} />;
     else if (view === 'chapter') page = <ChapterFlow explorerId={explorerId} onLeave={() => navigate('journey')} onParent={() => openParent('chapter')} />;
     else page = <ParentView explorerId={explorerId} onLeave={() => navigate('landing')} onBack={() => navigate(parentOrigin)} />;
     return <div className={`app-frame${view === 'chapter' ? ' in-chapter' : ''}`}>
       <AppRail explorerId={explorerId} active={view === 'chapter' ? 'journey' : view === 'parent' ? null : view as 'journey' | 'arcade' | 'books' | 'passport'} onNavigate={navigate} onSwitch={() => navigate('explorers')} onParent={() => openParent(view === 'chapter' ? 'chapter' : 'journey')} />
       <div className="app-content">{page}</div>
+      {pendingNav && (
+        <div className="nav-guard-scrim" role="dialog" aria-modal="true" aria-labelledby="navguard-h" onKeyDown={(e) => { if (e.key === 'Escape') setPendingNav(null); }}>
+          <div className="nav-guard">
+            <h2 id="navguard-h">Leave this game?</h2>
+            <p>Your round isn’t finished yet. If you leave now, this round will be lost.</p>
+            <div className="nav-guard-btns">
+              <button className="primary" autoFocus onClick={() => setPendingNav(null)}>Stay in the game</button>
+              <button className="ghost" onClick={leaveGame}>Leave game</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>;
   }
 
