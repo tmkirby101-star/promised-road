@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { prepareArtwork, ISAIAH_ART } from './lib/artwork';
+import { SPREADS } from './prototype/creationSpreads';
 import AppRail from './components/AppRail';
 import CollectionView from './components/CollectionView';
 import { stopSpeaking } from './lib/speak';
@@ -29,6 +31,10 @@ function loadNav(): { view: View; explorerId: string | null } {
 
 export default function App() {
   const store = useStore();
+  useEffect(() => {
+    // Begin warming artwork on entry; views still gate on successful decoding.
+    [...Object.values(ISAIAH_ART), ...SPREADS.map((spread) => spread.img)].forEach((src) => { void prepareArtwork(src).catch(() => {}); });
+  }, []);
   const [view, setView] = useState<View>(() => loadNav().view);
   const [explorerId, setExplorerId] = useState<string | null>(() => loadNav().explorerId);
   const [parentOrigin, setParentOrigin] = useState<'journey' | 'chapter'>('journey');

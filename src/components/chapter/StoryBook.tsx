@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { SPREADS, type Spread } from '../../prototype/creationSpreads';
 import { useStore } from '../../lib/store';
 import { speak, stopSpeaking } from '../../lib/speak';
+import { useArtwork } from '../../lib/artwork';
 import IsaiahGuide from './IsaiahGuide';
 import '../../prototype/book.css';
 
@@ -16,6 +17,13 @@ import '../../prototype/book.css';
 const CHID = 'genesis-01';
 const TOTAL_FACES = SPREADS.length * 2; // [img0, text0, …]
 
+const WELCOME = [
+  { title: 'Welcome to The Promised Road', line: 'Welcome, friend! I am Isaiah, one of God’s prophets. I will be your guide as we begin The Promised Road. Together, we will explore the Bible and learn who God is, how much He loves us, and how we can trust Him.' },
+  { title: 'One great story', line: 'The Bible has sixty-six books. Together, they tell one great story. God made a good world. People turned away from Him and sinned. But God did not leave us without hope. He promised a Savior: Jesus, His Son. We will follow that promise through the Bible.' },
+  { title: 'Why begin in Genesis?', line: 'Jesus is at the heart of God’s story. So why start here? Genesis means “beginning.” It tells us who made us, what went wrong, and why we need a Savior. Knowing the beginning helps us understand the good news: Jesus died for our sins and rose again. Salvation is God’s gift, received through faith in Jesus.' },
+  { title: 'Here is how we will explore', line: 'On your Journey, we will read Bible stories and Scripture, explore what they mean, remember God’s words, and write about what we discover. We will learn to live in ways that please Him. Books opens our available lessons. The Arcade has games you can play anytime. Your Passport keeps your chapter stamps and game achievements. Tap your name for help with reading or bigger text. Ready? Let us begin with the world God made.' },
+];
+
 export default function StoryBook({ explorerId, onNext, replaying }: { explorerId: string; onNext: () => void; replaying?: boolean }) {
   const store = useStore();
   const access = store.getAccess(explorerId);
@@ -29,7 +37,11 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
     setFaceState(n);
     store.setCursor(explorerId, CHID, { storyPage: n });
   };
-  const [narrow, setNarrow] = useState(false);
+  const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 820px)').matches);
+  const art = useArtwork(SPREADS.map((spread) => spread.img));
+  const [welcomePage, setWelcomePage] = useState(0);
+  const [artworkFailed, setArtworkFailed] = useState(false);
+  const [mountedArtwork, setMountedArtwork] = useState<string[]>([]);
   // Isaiah welcomes the child on first entry; a resume or a replay goes straight to reading.
   const [phase, setPhase] = useState<'welcome' | 'reading' | 'bridge'>(() => {
     const rec = store.getChapter(explorerId, CHID);
@@ -58,10 +70,10 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
 
   useEffect(() => {
     stopSpeaking();
-    if (phase === 'reading' && narration) speak(readable);
+    if (phase === 'reading' && art.ready && narration) speak(readable);
     return stopSpeaking;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [face, phase, narration]);
+  }, [face, phase, narration, art.ready]);
 
   const finishReading = () => {
     store.setParticipation(explorerId, CHID, { storyExperienced: true });
@@ -79,10 +91,15 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
         <div className="bk-stage">
           <IsaiahGuide
             pose="welcoming"
-            line="Welcome, friend. I am Isaiah, and I keep the sacred scrolls. Together let us read how God made the world — a good world, made with great care."
+            title={WELCOME[welcomePage].title}
+            line={WELCOME[welcomePage].line}
           >
-            <div className="bk-next">
-              <button onClick={() => setPhase('reading')}>Open the book →</button>
+            <p className="welcome-count">Welcome · {welcomePage + 1} of {WELCOME.length}</p>
+            <button className="bk-readaloud" onClick={() => speak(WELCOME[welcomePage].line)}>Read this to me</button>
+            <div className="welcome-actions">
+              {welcomePage > 0 && <button className="pr-secondary" onClick={() => { stopSpeaking(); setWelcomePage((n) => n - 1); }}>Back</button>}
+              <button className="pr-primary" onClick={() => { stopSpeaking(); if (welcomePage < WELCOME.length - 1) setWelcomePage((n) => n + 1); else setPhase('reading'); }}>{welcomePage < WELCOME.length - 1 ? 'Next →' : 'Open the book →'}</button>
+              <button className="welcome-skip" onClick={() => { stopSpeaking(); setPhase('reading'); }}>Skip welcome</button>
             </div>
           </IsaiahGuide>
         </div>
@@ -109,37 +126,29 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
   return (
     <div className={rootClass}>
       <div className="bk-stage">
-        <div className="bk-book">
+        <div className={`bk-book${mountedArtwork.length < SPREADS.length ? ' preparing' : ''}`} aria-busy={mountedArtwork.length < SPREADS.length}>
+          {mountedArtwork.length < SPREADS.length && <div className="book-loading-message" role="status"><p>{art.failed || artworkFailed ? 'The illustrations could not load.' : 'Preparing your illustrated book…'}</p>{(art.failed || artworkFailed) && <button className="pr-secondary" onClick={() => window.location.reload()}>Try again</button>}</div>}
           <span className="bk-ribbon" title={`Day ${spreadIndex + 1}`} />
-          {single ? (
-            face % 2 === 0 ? (
-              <div className="bk-page left">
-                <div className="bk-face" key={`i${face}`}>
-                  <div className="bk-illus"><img src={sp.img} alt={sp.alt} /></div>
-                </div>
-              </div>
-            ) : (
-              <div className="bk-page right"><TextFace sp={sp} k={`t${face}`} /></div>
-            )
-          ) : (
-            <>
-              <div className="bk-page left">
-                <div className="bk-face" key={`l${spreadIndex}`}>
-                  <div className="bk-illus"><img src={sp.img} alt={sp.alt} /></div>
-                </div>
-              </div>
-              <span className="bk-crease" />
-              <div className="bk-page right"><TextFace sp={sp} k={`r${spreadIndex}`} /></div>
-            </>
-          )}
+          <div className="bk-page left" hidden={single && face % 2 === 1}>
+            <div className="bk-face">
+              <div className="bk-illus">{SPREADS.map((spread, index) => <img key={spread.key} src={spread.img} width="1600" height="1200"
+                alt={index === spreadIndex ? spread.alt : ''} aria-hidden={index !== spreadIndex}
+                style={{ visibility: index === spreadIndex ? 'visible' : 'hidden' }}
+                onLoad={(event) => { const img = event.currentTarget; void img.decode().then(() => setMountedArtwork((ready) => ready.includes(spread.key) ? ready : [...ready, spread.key])).catch(() => setArtworkFailed(true)); }}
+                onError={() => setArtworkFailed(true)}
+              />)}</div>
+            </div>
+          </div>
+          {!single && <span className="bk-crease" />}
+          <div className="bk-page right" hidden={single && face % 2 === 0}><TextFace sp={sp} k={`r${spreadIndex}`} /></div>
         </div>
       </div>
       <div className="bk-nav">
-        <button onClick={prev} disabled={face === 0}>‹ Back</button>
+        <button onClick={prev} disabled={face === 0 || mountedArtwork.length < SPREADS.length}>‹ Back</button>
         <span className="bk-page-count">
           {single ? `Page ${face + 1} of ${TOTAL_FACES}` : `Day ${spreadIndex + 1} of ${SPREADS.length}`}
         </span>
-        <button onClick={next}>{atLast ? 'Finish the story ›' : 'Turn the page ›'}</button>
+        <button onClick={next} disabled={mountedArtwork.length < SPREADS.length}>{atLast ? 'Finish the story ›' : 'Turn the page ›'}</button>
       </div>
     </div>
   );
