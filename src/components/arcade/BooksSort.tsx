@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BOOKS_DIV, divLabel, shuffle } from '../../content/arcadeBooks';
 import { awardPoints, type GameResult } from '../../lib/arcadeStore';
+import { useRoundClock } from './useRoundClock';
 import { Hud, type OnFinish } from './kit';
 import type { RoundLength } from './Trivia';
 
@@ -79,7 +80,6 @@ export default function BooksSort({
   const [queue, setQueue] = useState(() => items.map((_, i) => i)); // indices into items
   const [score, setScore] = useState(0);
   const [firstTry, setFirstTry] = useState(0);
-  const [elapsed, setElapsed] = useState(0);
   const [wrongHere, setWrongHere] = useState<Set<string>>(new Set());
   const [answered, setAnswered] = useState(false);
   const [fb, setFb] = useState<{ text: string; good: boolean } | null>(null);
@@ -89,19 +89,15 @@ export default function BooksSort({
   const cleanRef = useRef(true);
   const finishedRef = useRef(false);
 
-  useEffect(() => {
-    if (!config.timed) return;
-    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
-    return () => clearInterval(id);
-  }, [config.timed]);
+  const elapsed = useRoundClock(config.timed && !answered && queue.length > 0);
 
   useEffect(() => {
     if (queue.length > 0 || finishedRef.current || total === 0) return;
     finishedRef.current = true;
     const result: GameResult = {
       game: 'sort',
-      boardKey: `sort|${ch.id}|${config.length}`,
-      label: `Sorting · ${ch.title}`,
+      boardKey: `sort|${ch.id}|${config.length}|${config.timed ? 'timed' : 'untimed'}|v2`,
+      label: `Sorting · ${ch.title} · ${total} books`,
       scopeTag: ch.id,
       timed: config.timed,
       elapsedSec: elapsed,
@@ -135,12 +131,12 @@ export default function BooksSort({
       setScore((s) => s + pts);
       if (n === 1) setFirstTry((f) => f + 1);
       setAnswered(true);
-      setFb({ text: `✓ Correct!  +${pts}`, good: true });
-      setTimeout(() => setQueue((q) => q.slice(1)), 700);
+      setFb({ text: `✓ ${item.book} belongs to ${item.bin}. +${pts}`, good: true });
+
     } else {
       setWrongHere((prev) => new Set(prev).add(bin));
       cleanRef.current = false;
-      setFb({ text: 'Try again …', good: false });
+      setFb({ text: `${item.book} does not belong to ${bin}. Try another ${ch.id === 'otnt' ? 'testament' : 'division'}.`, good: false });
     }
   }
 
@@ -153,11 +149,11 @@ export default function BooksSort({
     <div className="ac-play">
       <Hud score={score} elapsed={elapsed} timed={config.timed} />
       <div className="ac-progress">{total - queue.length + 1} of {total}</div>
-      <div className="ac-sort-prompt">Which division does this book belong to?</div>
+      <div className="ac-sort-prompt">Which {ch.id === 'otnt' ? 'testament' : 'division'} does this book belong to?</div>
       <div className="ac-bigbook">{item.book}</div>
 
       <div className={`ac-fb${fb ? (fb.good ? ' good' : ' bad') : ''}`}>
-        {fb ? <div className="ac-fb-line">{fb.text}</div> : <div className="ac-fb-line hint">Pick a division.</div>}
+        {fb ? <div className="ac-fb-line">{fb.text}</div> : <div className="ac-fb-line hint">Pick a {ch.id === 'otnt' ? 'testament' : 'division'}.</div>}
       </div>
 
       <div className="ac-bins">
@@ -173,6 +169,7 @@ export default function BooksSort({
         ))}
       </div>
 
+      {answered && <button className="ac-next" onClick={() => setQueue((q) => q.slice(1))}>{queue.length === 1 ? 'Finish →' : 'Next →'}</button>}
       {queue.length > 1 && (
         <button className="ac-skip" disabled={answered} onClick={skip}>Skip ↷</button>
       )}

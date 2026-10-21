@@ -1,7 +1,9 @@
+import { triviaFeedback } from '../../content/arcadeFeedback';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { TRIVIA, type TriviaTier, type TriviaQ } from '../../content/arcadeTrivia';
 import { shuffle } from '../../content/arcadeBooks';
 import { awardPoints, type GameResult, type MissRecord } from '../../lib/arcadeStore';
+import { useRoundClock } from './useRoundClock';
 import { Hud, type OnFinish, type ReviewItem } from './kit';
 
 export type RoundLength = 'quick' | 'standard' | 'full';
@@ -52,7 +54,6 @@ export default function Trivia({
   const [score, setScore] = useState(0);
   const [firstTry, setFirstTry] = useState(0);
   const [cleanRound, setCleanRound] = useState(true);
-  const [elapsed, setElapsed] = useState(0);
 
   // per-question interactive state
   const [attempts, setAttempts] = useState(0);
@@ -72,11 +73,7 @@ export default function Trivia({
   );
 
   // timer
-  useEffect(() => {
-    if (!config.timed) return;
-    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
-    return () => clearInterval(id);
-  }, [config.timed]);
+  const elapsed = useRoundClock(config.timed && !answered && !reveal && qi < rounds.length);
 
   // finish once we run past the last question
   useEffect(() => {
@@ -85,7 +82,7 @@ export default function Trivia({
     const total = rounds.length;
     const result: GameResult = {
       game: 'trivia',
-      boardKey: config.practice ? 'trivia|practice' : `trivia|${config.tier}|${config.length}`,
+      boardKey: config.practice ? 'trivia|practice' : `trivia|${config.tier}|${config.length}|${config.timed ? 'timed' : 'untimed'}|v2`,
       label: config.practice
         ? 'Practice · My Misses'
         : `Trivia · ${cap(config.tier)} · ${cap(config.length)}`,
@@ -111,6 +108,7 @@ export default function Trivia({
 
   const round = rounds[qi];
   const q = round.q;
+  const evidence = triviaFeedback(q);
 
   function choose(origIdx: number) {
     if (answered || wrong.has(origIdx)) return;
@@ -145,6 +143,7 @@ export default function Trivia({
   return (
     <div className="ac-play">
       <Hud score={score} elapsed={elapsed} timed={config.timed} />
+      {config.timed && (answered || reveal) && <p className="ac-clock-note" role="status">Clock paused · take your time reading.</p>}
       <div className="ac-progress">Question {qi + 1} of {rounds.length}</div>
       <div className="ac-question">{q.q}</div>
 
@@ -156,7 +155,7 @@ export default function Trivia({
             <button
               key={origIdx}
               className={`ac-opt${isCorrect ? ' correct' : ''}${isWrong ? ' wrong' : ''}`}
-              disabled={answered || isWrong}
+              disabled={answered || isWrong || reveal}
               onClick={() => choose(origIdx)}
             >
               {q.opts[origIdx]}
@@ -171,16 +170,19 @@ export default function Trivia({
             <div className="ac-fb-line">
               ✓ {attempts === 1 ? 'Correct!' : 'Got it.'} The answer is <b>{q.opts[q.a]}</b>.
             </div>
-            {q.ref && (
+            {(
               reveal ? (
-                <div className="ac-reveal">📖 {q.ref}</div>
+                <div className="ac-explanation"><p>{evidence.note}</p>{evidence.passage && <blockquote>{evidence.passage}</blockquote>}{q.ref && <a href={evidence.url} target="_blank" rel="noopener noreferrer">{q.ref} · Read passage (WEB)</a>}</div>
               ) : (
-                <button className="ac-reveal-btn" onClick={() => setReveal(true)}>Show Scripture</button>
+                <button className="ac-reveal-btn" onClick={() => setReveal(true)}>{q.ref ? 'Why this answer? Read Scripture' : 'Why this answer?'}</button>
               )
             )}
           </>
         ) : wrong.size ? (
-          <div className="ac-fb-line">Not quite — try another answer.</div>
+          <><div className="ac-fb-line">That choice does not fit this question. Try again, or read a Scripture hint.</div>
+            <button className="ac-reveal-btn" onClick={() => setReveal((v) => !v)}>{reveal ? 'Back to answering' : 'Read a Scripture hint'}</button>
+            {reveal && <div className="ac-explanation">{evidence.passage ? <blockquote>{evidence.passage}</blockquote> : <p>{evidence.note}</p>}{q.ref && <a href={evidence.url} target="_blank" rel="noopener noreferrer">{q.ref} · WEB</a>}<p>The clock is paused while you read.</p></div>}
+          </>
         ) : (
           <div className="ac-fb-line hint">Pick the best answer.</div>
         )}
