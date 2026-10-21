@@ -339,12 +339,17 @@ function Finish({ explorerId, defaultInitials, result, detail, onPlayAgain, onMe
   const isPractice = result.scopeTag === 'practice';
   const outcome = useMemo(() => arcade.recordPersonal(explorerId, result, !isPractice), [explorerId, result, isPractice]);
   const [initials, setInitials] = useState(defaultInitials);
-  const [saved, setSaved] = useState(false);
+  const [saveState, setSaveState] = useState<'idle' | 'saved' | 'failed'>('idle');
   const [showReview, setShowReview] = useState(false);
   const firstTryPct = result.total > 0 ? Math.round((result.firstTry / result.total) * 100) : 0;
   const canSave = !isPractice && (outcome.qualifiesScore || outcome.qualifiesClean);
 
-  const save = () => { arcade.addToBoard(result.boardKey, initials, result); setSaved(true); };
+  // Only announce success once the durable write actually succeeded; a retry is
+  // idempotent (same run replaces its board entry, never duplicates).
+  const save = () => {
+    const { persisted } = arcade.addToBoard(result.boardKey, initials, result);
+    setSaveState(persisted ? 'saved' : 'failed');
+  };
 
   return (
     <div className="ac-finish">
@@ -356,6 +361,10 @@ function Finish({ explorerId, defaultInitials, result, detail, onPlayAgain, onMe
         <div><span>First try</span><b>{firstTryPct}%</b></div>
       </div>
 
+      {!isPractice && !outcome.persisted && (
+        <div className="ac-flag warn">This device isn’t saving right now (storage may be full or blocked), so your result is kept just for this visit.</div>
+      )}
+
       {outcome.scoreImproved && <div className="ac-flag">⬆ New personal best score!</div>}
       {outcome.cleanTimeImproved && <div className="ac-flag">⚡ Fastest clean run yet!</div>}
       {outcome.newAchievements.length > 0 && <div className="ac-earned" role="status"><span className="ac-earned-seal" aria-hidden="true">✦</span><p>A new chapter in your record</p>{outcome.newAchievements.map((a) => <div className="ac-flag badge" key={a.id}><strong>{a.title}</strong><br />{a.blurb}</div>)}</div>}
@@ -364,14 +373,17 @@ function Finish({ explorerId, defaultInitials, result, detail, onPlayAgain, onMe
         <div className="ac-flag">{(detail?.corrected?.length ?? 0)} corrected · {arcade.getMisses(explorerId).length} still to review</div>
       )}
 
-      {canSave && !saved && (
+      {canSave && saveState !== 'saved' && (
         <div className="ac-namebox">
           <div>You made the Wall of Fame! Your initials:</div>
           <input className="ac-initials" maxLength={3} value={initials} onChange={(e) => setInitials(e.target.value.toUpperCase())} />
-          <button className="ac-save" onClick={save}>Save</button>
+          <button className="ac-save" onClick={save}>{saveState === 'failed' ? 'Try again' : 'Save'}</button>
+          {saveState === 'failed' && (
+            <div className="ac-flag warn">Not saved on this device — storage may be full or blocked. Your result is still here for now.</div>
+          )}
         </div>
       )}
-      {saved && <div className="ac-flag">Saved to the Wall of Fame as {initials.toUpperCase()}.</div>}
+      {saveState === 'saved' && <div className="ac-flag">Saved to the Wall of Fame as {initials.toUpperCase()}.</div>}
 
       {detail?.missed && detail.missed.length > 0 && (
         <div className="ac-review-wrap">

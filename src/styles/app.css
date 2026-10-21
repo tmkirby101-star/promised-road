@@ -439,3 +439,12 @@ body.pr-large{ font-size:18px; }
 .guide-welcome .guide-say{font-size:clamp(22px,2vw,27px);line-height:1.6;max-width:28em}
 .guide-welcome .welcome-actions{margin-top:24px}.guide-welcome .pr-primary{font-size:18px;padding:15px 30px}
 @media(max-width:700px){.bk-welcome .bk-stage{padding:12px 4px 24px}.guide-panel.guide-welcome{padding:24px;gap:16px;min-height:0;flex-direction:column;text-align:center}.guide-welcome .guide-portrait{width:170px;height:210px;max-width:100%;align-self:center}.guide-welcome .welcome-title{font-size:29px;margin:10px 0 14px}.guide-welcome .guide-say{font-size:21px}.guide-welcome .welcome-actions{justify-content:center}}
+
+/* Entry panel: working demo first, account screens behind an explicit preview (R2) */
+.guest-entry.primary-cta{ margin-top:6px; border-top:none; padding-top:0; }
+.accounts-preview{ margin-top:24px; border-top:1px solid #deded0; padding-top:16px; text-align:center; }
+.accounts-preview .fine{ font-size:13px; color:#717c72; margin:0 0 8px; }
+.preview-toggle{ background:transparent; border:none; color:#1d403d; font-size:13px; text-decoration:underline; cursor:pointer; padding:4px 6px; }
+.preview-toggle:hover{ color:#b88a44; }
+.accounts-preview-body{ margin-top:14px; text-align:left; }
+.preview-tag{ font-size:12px; color:#8a6d2f; background:#f6edd6; border:1px solid #e6d6a8; border-radius:8px; padding:7px 10px; margin:0 0 12px; text-align:center; }

@@ -32,6 +32,7 @@ export interface PersonalBest {
 export interface BoardEntry {
   name: string;
   val: number;
+  rid?: string; // the run that produced it — lets a retry replace rather than duplicate
 }
 export interface Board {
   clean: BoardEntry[]; // first-try-perfect runs, ranked by time (asc)
@@ -44,7 +45,7 @@ export interface MissRecord {
 }
 
 interface ArcadeShape {
-  recorded: Record<string, RecordOutcome>;
+  recorded: Record<string, RecordCore>;
   personal: Record<string, Record<string, PersonalBest>>; // explorerId -> boardKey -> PB
   achievements: Record<string, Record<string, number>>; // explorerId -> achId -> earnedAt
   misses: Record<string, MissRecord[]>; // explorerId -> missed trivia questions
@@ -65,12 +66,23 @@ function load(): ArcadeShape {
   return empty();
 }
 
+// In-memory mirror: the working copy of arcade state for this session. Reads and
+// writes go through it, so a blocked/full localStorage still keeps results for the
+// session (they just won't survive a reload) — and nothing silently reverts to a
+// stale on-disk copy mid-session. save() writes through and reports whether the
+// durable write actually succeeded.
+let mem: ArcadeShape | null = null;
+function state(): ArcadeShape {
+  if (!mem) mem = load();
+  return mem;
+}
+
 function save(s: ArcadeShape): boolean {
   try {
     localStorage.setItem(KEY, JSON.stringify(s));
     return true;
   } catch {
-    return false;
+    return false; // storage blocked/full — kept in memory, not durable
   }
 }
 
@@ -112,32 +124,35 @@ export interface RecordOutcome {
   qualifiesScore: boolean; // score would make the high-score board
   firstTryPct: number;
   newAchievements: Achievement[];
+  persisted: boolean; // false => kept in memory only; won't survive a reload
 }
+// The durable part of an outcome (everything except the per-call persistence flag).
+type RecordCore = Omit<RecordOutcome, 'persisted'>;
 
 export const arcade = {
   getPersonal(explorerId: string, boardKey: string): PersonalBest | null {
-    const s = load();
+    const s = state();
     return s.personal[explorerId]?.[boardKey] ?? null;
   },
 
   getBoard(boardKey: string): Board {
-    const s = load();
+    const s = state();
     return s.boards[boardKey] ?? { clean: [], scores: [] };
   },
 
   getAchievements(explorerId: string): { ach: Achievement; at: number }[] {
-    const s = load();
+    const s = state();
     const owned = s.achievements[explorerId] || {};
     return ACHIEVEMENTS.filter((a) => owned[a.id]).map((a) => ({ ach: a, at: owned[a.id] }));
   },
 
   getMisses(explorerId: string): MissRecord[] {
-    return load().misses[explorerId] ?? [];
+    return state().misses[explorerId] ?? [];
   },
 
   // Merge this round's missed questions, and drop any the child has since gotten right.
-  updateMisses(explorerId: string, missedThisRound: MissRecord[], correctedThisRound: MissRecord[]) {
-    const s = load();
+  updateMisses(explorerId: string, missedThisRound: MissRecord[], correctedThisRound: MissRecord[]): boolean {
+    const s = state();
     const cur = s.misses[explorerId] ?? [];
     const keyOf = (m: MissRecord) => m.tier + '::' + m.q;
     const corrected = new Set(correctedThisRound.map(keyOf));
@@ -145,15 +160,17 @@ export const arcade = {
     for (const m of cur) if (!corrected.has(keyOf(m))) map.set(keyOf(m), m);
     for (const m of missedThisRound) map.set(keyOf(m), m);
     s.misses[explorerId] = [...map.values()];
-    save(s);
+    return save(s);
   },
 
   // Record personal progress + achievements for a finished round. Does NOT write
   // the shared family board (that needs the player's initials — see addToBoard).
   // Practice rounds pass record:false so they don't inflate personal bests.
   recordPersonal(explorerId: string, r: GameResult, keepBest = true): RecordOutcome {
-    const s = load();
-    if (r.runId && s.recorded[r.runId]) return s.recorded[r.runId];
+    const s = state();
+    // Already recorded (re-render, StrictMode double-invoke, or a retry): don't
+    // double-count plays or re-award. Re-attempt the durable write and report it.
+    if (r.runId && s.recorded[r.runId]) return { ...s.recorded[r.runId], persisted: save(s) };
     const firstTryPct = r.total > 0 ? Math.round((r.firstTry / r.total) * 100) : 0;
 
     const byExp = s.personal[explorerId] || (s.personal[explorerId] = {});
@@ -196,30 +213,36 @@ export const arcade = {
     }
     const newAchievements = earnedList(s, explorerId, ids);
 
-    const outcome = { scoreImproved, cleanTimeImproved, qualifiesClean, qualifiesScore, firstTryPct, newAchievements };
+    const core: RecordCore = { scoreImproved, cleanTimeImproved, qualifiesClean, qualifiesScore, firstTryPct, newAchievements };
     if (r.runId) {
-      s.recorded[r.runId] = outcome;
-      const ids = Object.keys(s.recorded);
-      if (ids.length > 200) delete s.recorded[ids[0]];
+      s.recorded[r.runId] = core;
+      const keys = Object.keys(s.recorded);
+      if (keys.length > 200) delete s.recorded[keys[0]];
     }
-    save(s);
-    return outcome;
+    return { ...core, persisted: save(s) };
   },
 
-  // Add a result to the shared family board under the given initials.
-  addToBoard(boardKey: string, name: string, r: GameResult) {
-    const s = load();
+  // Add a result to the shared family board under the given initials. Idempotent
+  // per run: a retry replaces that run's entry instead of duplicating it. Returns
+  // whether the write was durable.
+  addToBoard(boardKey: string, name: string, r: GameResult): { persisted: boolean } {
+    const s = state();
     const board = s.boards[boardKey] || (s.boards[boardKey] = { clean: [], scores: [] });
     const nm = (name || '???').toUpperCase().slice(0, 3);
-    board.scores.push({ name: nm, val: r.score });
+    const rid = r.runId;
+    if (rid) {
+      board.scores = board.scores.filter((e) => e.rid !== rid);
+      board.clean = board.clean.filter((e) => e.rid !== rid);
+    }
+    board.scores.push({ name: nm, val: r.score, rid });
     board.scores.sort((a, b) => b.val - a.val);
     board.scores = board.scores.slice(0, BOARD_MAX);
     if (r.clean && r.timed) {
-      board.clean.push({ name: nm, val: r.elapsedSec });
+      board.clean.push({ name: nm, val: r.elapsedSec, rid });
       board.clean.sort((a, b) => a.val - b.val);
       board.clean = board.clean.slice(0, BOARD_MAX);
     }
-    save(s);
+    return { persisted: save(s) };
   },
 };
 

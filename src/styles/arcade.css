@@ -177,3 +177,6 @@
 @media(max-width:600px){.ac-game-art{height:150px}.ac-setup-panel{padding:18px 14px}.ac-order-history ol{columns:2}.ac-pool{grid-template-columns:repeat(2,minmax(0,1fr))}.ac-current-slot{font-size:18px;}}
 .ac-pool{max-height:clamp(240px,calc(100svh - 390px),540px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:6px 8px 12px;border-top:1px solid #6c5a8644;}
 .ac-pool:focus-within{border-top-color:#caa453;}
+
+/* Honest persistence notices (R1): kept-in-memory / not-saved warnings */
+.ac-flag.warn{ background:rgba(232,115,143,.12); border-color:rgba(232,115,143,.5); color:#ffd7df; }
