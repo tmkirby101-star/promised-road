@@ -1,8 +1,9 @@
+import ReadAloudButton from '../ReadAloudButton';
 import BrandMark from '../BrandMark';
 import { useEffect, useState } from 'react';
 import { SPREADS, type Spread } from '../../prototype/creationSpreads';
 import { useStore } from '../../lib/store';
-import { speak, stopSpeaking } from '../../lib/speak';
+import { speak, stopSpeaking, prepareNarration } from '../../lib/speak';
 import { useArtwork } from '../../lib/artwork';
 import IsaiahGuide from './IsaiahGuide';
 import '../../prototype/book.css';
@@ -75,6 +76,12 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [face, phase, narration, art.ready]);
 
+  useEffect(() => {
+    prepareNarration(readable);
+    const following = SPREADS[spreadIndex + 1];
+    if (following) prepareNarration(following.narration.join(' ') + ' From Scripture. ' + following.scripture.text + (following.secondScripture ? ' ' + following.secondScripture.text : ''));
+  }, [readable, spreadIndex]);
+
   const finishReading = () => {
     store.setParticipation(explorerId, CHID, { storyExperienced: true });
     setPhase('bridge');
@@ -95,7 +102,7 @@ export default function StoryBook({ explorerId, onNext, replaying }: { explorerI
             line={WELCOME[welcomePage].line}
           >
             <p className="welcome-count">Welcome · {welcomePage + 1} of {WELCOME.length}</p>
-            <button className="bk-readaloud" onClick={() => speak(WELCOME[welcomePage].line)}>Read this to me</button>
+
             <div className="welcome-actions">
               {welcomePage > 0 && <button className="pr-secondary" onClick={() => { stopSpeaking(); setWelcomePage((n) => n - 1); }}>Back</button>}
               <button className="pr-primary" onClick={() => { stopSpeaking(); if (welcomePage < WELCOME.length - 1) setWelcomePage((n) => n + 1); else setPhase('reading'); }}>{welcomePage < WELCOME.length - 1 ? 'Next →' : 'Open the book →'}</button>
@@ -163,12 +170,7 @@ function TextFace({ sp, k }: { sp: Spread; k: string }) {
         {sp.narration.map((para, i) => (
           <p className="bk-narr" key={i}>{para}</p>
         ))}
-        <button
-          className="bk-readaloud"
-          onClick={() => speak(sp.narration.join(' ') + ' From Scripture. ' + sp.scripture.text + (sp.secondScripture ? ' ' + sp.secondScripture.text : ''))}
-        >
-          🔊 Read this page to me
-        </button>
+        <ReadAloudButton text={sp.narration.join(' ') + ' From Scripture. ' + sp.scripture.text + (sp.secondScripture ? ' ' + sp.secondScripture.text : '')} label="Read this page to me" />
         <div className="bk-scrip">
           <span className="sclab">From Scripture · WEB</span>
           <span className="q">“{sp.scripture.text}”</span>

@@ -1,5 +1,7 @@
+import ReadAloudButton from '../ReadAloudButton';
+import { prepareNarration, stopSpeaking } from '../../lib/speak';
 import BrandMark from '../BrandMark';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 // Isaiah appears only at meaningful transitions — beside his words, not over the
 // story. He reads and points to Scripture; he is never an eyewitness to Creation.
@@ -16,6 +18,7 @@ export default function IsaiahGuide({
   title?: string;
   children?: ReactNode;
 }) {
+  useEffect(() => { prepareNarration(line); return stopSpeaking; }, [line]);
   const art = useArtwork([POSES[pose]]);
   const [portraitReady, setPortraitReady] = useState('');
   const [failed, setFailed] = useState(false);
@@ -28,6 +31,7 @@ export default function IsaiahGuide({
         <div className="guide-who">ISAIAH</div>
         {title && <h2 className="welcome-title">{title}</h2>}
         <p className="guide-say">{line}</p>
+        <ReadAloudButton text={line} />
         {children}
       </div>
     </div>
